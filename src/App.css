@@ -9,36 +9,6 @@
   z-index: 1;
 }
 
-.resume-fab {
-  position: fixed;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: right center;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(10, 10, 14, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: var(--ink);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
-  z-index: 998;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.resume-fab:hover {
-  transform: translateY(-50%) rotate(-90deg) translateX(-2px);
-  border-color: rgba(76, 120, 255, 0.45);
-  box-shadow: 0 16px 36px rgba(76, 120, 255, 0.25);
-}
-
-.resume-fab:focus-visible {
-  outline: 2px solid rgba(76, 120, 255, 0.7);
-  outline-offset: 4px;
-}
 
 .splash {
   position: fixed;
@@ -1162,7 +1132,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding: 140px 16px 60px;
+    padding: 120px 16px 60px;
   }
 
   .hero {
@@ -1215,12 +1185,17 @@
 
   .splash-title {
     font-size: clamp(1.6rem, 7vw, 2.4rem);
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+  }
+
+  .splash-glitch {
+    letter-spacing: 0.12em;
   }
 
   .splash-sub {
     font-size: 0.72rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1em;
   }
 
   .splash-glow-one {
@@ -1237,14 +1212,6 @@
     bottom: -160px;
   }
 
-  .resume-fab {
-    top: auto;
-    bottom: 18px;
-    right: 16px;
-    transform: none;
-    font-size: 0.78rem;
-    padding: 8px 14px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

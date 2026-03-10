@@ -105,22 +105,22 @@
   .navbar {
     top: 10px;
     width: calc(100% - 24px);
-    padding: 10px 12px;
-    border-radius: 16px;
-    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    gap: 6px;
   }
 
   .navbar-logo {
-    font-size: 14px;
-    letter-spacing: 0.1em;
+    font-size: 13px;
+    letter-spacing: 0.08em;
   }
 
   .navbar-links {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    font-size: 12px;
+    gap: 8px;
+    font-size: 11px;
     line-height: 1.2;
   }
 
@@ -129,10 +129,10 @@
   }
 
   .navbar-cta {
-    width: 100%;
+    width: auto;
     justify-content: center;
-    font-size: 12px;
-    padding: 8px 10px;
+    font-size: 11px;
+    padding: 6px 10px;
     border-radius: 10px;
   }
 }
