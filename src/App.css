@@ -21,6 +21,7 @@
   transition: opacity 0.5s ease, filter 0.5s ease;
   will-change: opacity, filter;
   transform: translateZ(0);
+  height: 100vh;
 }
 
 .splash-hide {
@@ -1097,6 +1098,15 @@
   }
 }
 
+@keyframes splashFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(76, 120, 255, 0.4);
@@ -1131,6 +1141,23 @@
 }
 
 @media (max-width: 640px) {
+  .splash {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .splash-content {
+    animation: splashFade 0.5s ease-out both;
+  }
+
+  .splash-glitch {
+    animation: none;
+  }
+
+  .splash-glitch::after {
+    animation-duration: 5.2s;
+  }
+
   .page {
     padding: 120px 16px 60px;
   }
