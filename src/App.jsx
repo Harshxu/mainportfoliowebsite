@@ -252,14 +252,6 @@ function App() {
       </div>
 
       <Navbar />
-      <a
-        className="resume-fab"
-        href="/harsh-kumawat-resume.pdf"
-        download
-        aria-label="Download resume"
-      >
-        Download Resume
-      </a>
 
       <main>
         <section className="hero">
