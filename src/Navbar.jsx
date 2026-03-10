@@ -15,7 +15,7 @@ export default function Navbar() {
 
   return (
     <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
-      <div className="navbar-logo">HK / DEV</div>
+      <div className="navbar-logo">Harsh Kumawat / DEV</div>
       <div className="navbar-links">
         <a href="#work">Work</a>
         <a href="#skills">Approach</a>
