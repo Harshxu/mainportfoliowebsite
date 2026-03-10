@@ -372,7 +372,7 @@
 }
 
 .hero-stack {
-  margin-top: 80px;
+  margin-top: 50px;
 }
 
 .hero-copy {
@@ -539,8 +539,9 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(12, 12, 14, 0.78);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-  animation: floatIn 0.9s ease both;
   will-change: transform;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-card.glow {
@@ -549,17 +550,24 @@
     0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
-.float-a {
-  animation: floatIn 0.9s ease both;
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top,
+    rgba(76, 120, 255, 0.16),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.float-b {
-  animation: floatIn 0.9s ease both 0.2s;
+.hero-card:hover::after {
+  opacity: 1;
 }
 
-.float-c {
-  animation: floatIn 0.9s ease both 0.4s;
-}
 
 .card-label {
   text-transform: uppercase;
@@ -986,17 +994,6 @@
   }
 }
 
-@keyframes floatIn {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @keyframes floatSoft {
   0%,
   100% {
@@ -1201,7 +1198,7 @@
   }
 
   .hero-stack {
-    margin-top: 24px;
+    margin-top: 20px;
   }
 
   .hero-card {
