@@ -1,0 +1,46 @@
+HARSH KUMAWAT
+Jaipur, India 302012 | +91 93513 03138 | harshkumawat9950@gmail.com 
+LinkedIn : linkedin.com/in/harshkumawat01  |  GitHub : https://github.com/Harshxu
+PROFESSIONAL SUMMARY
+Backend Developer with 2+ years of experience building scalable ASP.NET Core Web APIs, optimizing SQL performance, and supporting
+production systems. MongoDB Associate Developer certified with hands-on exposure to AWS services including RDS, Aurora, S3, API
+Gateway, and SQS. Proven ability to deliver reliable, high-performance backend solutions. Adept at leading end-to-end backend development
+cycles, from data flow management to deployment in production environments.
+CORE SKILLS
+PROFESSIONAL EXPERIENCE
+Backend Developer
+Autovyn Consultancy Pvt. Ltd., Jaipur, India | September 2023 – Present
+Developed and maintained robust backend systems ensuring database efficiency and reliability. Optimized complex SQL queries, improving
+performance by 40%. Reduced API response times through efficient integration strategies. Skilled in working with both SQL and NoSQL
+databases, including Microsoft SQL Server, PostgreSQL, MySQL, and MongoDB. MongoDB Certified – Associate Developer. Administered
+and optimized MS SQL Server and PostgreSQL databases using Dapper for data access. Led full project lifecycle from data sourcing to
+deployment, managing branching, merging, and CI/CD pipelines.
+PROJECTS
+Maruti CRM Insurance Portal – msibplcrm.co.in
+Designed a CRM platform to manage insurance workflows, enhance customer relationship management, and improve operational efficiency.
+Service Marketing Reminder – dealercrm.co.in
+Implemented an automated reminder system to boost customer engagement and ensure timely service follow-ups.
+AutoVYN Connect
+Contributed to backend development for an attendance and leave management system using .NET, enabling secure login/logout, leave
+tracking, and real-time HR reporting.
+CERTIFICATIONS
+EDUCATION
+Master of Computer Applications 
+Vivekananda Global University, Jaipur
+KEY ACHIEVEMENTS
+Print / Save as PDF
+Instructions: Click the button above → Choose "Save as PDF" → Click Save
+► C#, ASP.NET Core Web API
+► MongoDB (Certified Associate)
+► API Gateway, Aurora & RDS, S3 
+► Microsoft SQL Server, PostgreSQL
+► AWS EC2, Lambda, CloudWatch, Glue, SQS
+► GitHub, Jira, Excel 
+► MongoDB Certified Associate Developer
+► AWS Community Day - Participation Certificate 
+► Reduced API response time by up to 40%
+► Improved SQL performance and system stability through optimization
+► Delivered production-ready APIs with thorough testing and documentation
+► Successfully led full backend deployment cycle, including branch management, pipeline validation, and production release
+► Streamlined and secured database workflows, ensuring accurate and efficient data transfer between environments
+► Acted as the primary point of control for data flow, system monitoring, and backend reliability 
