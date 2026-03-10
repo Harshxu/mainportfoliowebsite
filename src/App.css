@@ -176,7 +176,7 @@
   border-radius: 50%;
   filter: blur(0px);
   opacity: 0.65;
-  animation: float 12s ease-in-out infinite;
+  animation: none;
 }
 
 .orb-one {
@@ -224,6 +224,17 @@
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter><rect width="140" height="140" filter="url(%23n)" opacity="0.28"/></svg>');
   opacity: 0.2;
   mix-blend-mode: soft-light;
+}
+
+.parallax {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Performance: reduce heavy paint layers */
+.grid-lines,
+.noise {
+  display: none;
 }
 
 .topbar {
@@ -448,7 +459,7 @@
     rgba(72, 210, 255, 0.85)
   );
   color: #0b0b12;
-  box-shadow: 0 16px 30px rgba(76, 120, 255, 0.35);
+  box-shadow: 0 10px 20px rgba(76, 120, 255, 0.3);
 }
 
 .ghost {
@@ -527,7 +538,7 @@
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(12, 12, 14, 0.78);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   animation: floatIn 0.9s ease both;
   will-change: transform;
 }
@@ -746,7 +757,7 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
@@ -1195,11 +1206,16 @@
 
   .hero-card {
     padding: 16px 18px;
+    box-shadow: none;
   }
 
   .hero-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  .card {
+    box-shadow: none;
   }
 
   .marquee {
@@ -1237,6 +1253,12 @@
     height: 320px;
     right: -140px;
     bottom: -160px;
+  }
+
+  .orb,
+  .grid-lines,
+  .noise {
+    opacity: 0.12;
   }
 
 }

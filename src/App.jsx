@@ -87,51 +87,7 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    const gsap = window.gsap
-    const ScrollTrigger = window.ScrollTrigger
-    if (gsap && ScrollTrigger) {
-      gsap.registerPlugin(ScrollTrigger)
-      gsap.utils.toArray('.parallax').forEach((el) => {
-        gsap.to(el, {
-          y: -200,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        })
-      })
-    }
-
-    let lenis
-    let rafId
-    if (window.Lenis) {
-      lenis = new window.Lenis({
-        duration: 1.2,
-        smooth: true,
-      })
-      const raf = (time) => {
-        lenis.raf(time)
-        rafId = requestAnimationFrame(raf)
-      }
-      rafId = requestAnimationFrame(raf)
-    }
-
-    return () => {
-      if (lenis && typeof lenis.destroy === 'function') {
-        lenis.destroy()
-      }
-      if (rafId) {
-        cancelAnimationFrame(rafId)
-      }
-      if (window.ScrollTrigger && ScrollTrigger) {
-        ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
-      }
-    }
-  }, [])
+  // Disabled JS smooth scroll/parallax to keep consistent 60fps.
 
   const skills = [
     {
