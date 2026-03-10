@@ -66,7 +66,9 @@ function App() {
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll('.reveal'))
     if (!('IntersectionObserver' in window)) {
-      elements.forEach((el) => el.classList.add('reveal-in'))
+      elements.forEach((el) =>
+        requestAnimationFrame(() => el.classList.add('reveal-in'))
+      )
       return
     }
 
@@ -74,7 +76,9 @@ function App() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('reveal-in')
+            requestAnimationFrame(() =>
+              entry.target.classList.add('reveal-in')
+            )
             observer.unobserve(entry.target)
           }
         })
@@ -274,8 +278,8 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-stack parallax reveal" style={{ '--delay': '180ms' }}>
-            <div className="hero-card glow float-a">
+          <div className="hero-stack">
+            <div className="hero-card glow reveal" style={{ '--delay': '180ms' }}>
               <p className="card-label">Signature</p>
               <p className="card-title">Backend Developer</p>
               <p className="card-body">
@@ -289,12 +293,12 @@ function App() {
                 <span className="tag">AWS</span>
               </div>
             </div>
-            <div className="hero-card float-b">
+            <div className="hero-card glow reveal" style={{ '--delay': '260ms' }}>
               <p className="card-label">Certified</p>
               <p className="card-title">MongoDB Associate</p>
               <p className="card-body">Schema design, query optimization.</p>
             </div>
-            <div className="hero-card float-c">
+            <div className="hero-card glow reveal" style={{ '--delay': '340ms' }}>
               <p className="card-label">Impact</p>
               <p className="card-title">40% Faster APIs</p>
               <p className="card-body">Delivered measurable performance wins.</p>
