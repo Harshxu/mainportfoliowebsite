@@ -114,6 +114,7 @@ function App() {
         'Lambda',
         'CloudWatch',
         'Glue',
+        'Azure',
         'SQS',
         'API Gateway',
         'Aurora & RDS',
@@ -122,7 +123,7 @@ function App() {
     },
     {
       title: 'Workflow',
-      items: ['GitHub', 'CI/CD', 'Jira', 'Excel', 'Zendesk'],
+      items: ['GitHub', 'CI/CD', 'Jira', 'Excel', 'Zendesk', 'Snyk', 'Sonar'],
     },
   ]
 
@@ -157,19 +158,36 @@ function App() {
     },
   ]
 
-  const experienceBullets = [
-    'Developed and maintained backend systems ensuring database efficiency and reliability across production environments.',
-    'Optimized complex SQL queries and improved API response times by 40%.',
-    'Worked across SQL and NoSQL databases including MS SQL Server, PostgreSQL, MySQL, and MongoDB.',
-    'Administered SQL Server and PostgreSQL using Dapper for data access while supporting schema changes and data migrations.',
-    'Led full project lifecycle from data sourcing to deployment, including branching, merging, and CI/CD pipelines.',
+  const experiences = [
+    {
+      role: 'Software Developer Engineer',
+      company: 'Autovyn Consultancy Pvt. Ltd., Jaipur, India',
+      period: 'Sep 2023 - Present',
+      bullets: [
+        'Developed and maintained production systems ensuring database efficiency and reliability across production environments.',
+        'Optimized complex SQL queries and improved API response times by 40%.',
+        'Worked across SQL and NoSQL databases including MS SQL Server, PostgreSQL, MySQL, and MongoDB.',
+        'Administered SQL Server and PostgreSQL using Dapper for data access while supporting schema changes and data migrations.',
+        'Led full project lifecycle from data sourcing to deployment, including branching, merging, and CI/CD pipelines.',
+      ],
+    },
+    {
+      role: 'Software Developer Engineer',
+      company: 'Dunnfox Technologies',
+      period: 'January 2023 – September 2023',
+      bullets: [
+        'Built and delivered high-performance web applications and services, expanding technical capabilities.',
+        'Designed robust database schemas and optimized data flows to support responsive system operations.',
+        'Collaborated in cross-functional teams to troubleshoot complex technical challenges and deliver quality products.',
+      ],
+    },
   ]
 
   const achievements = [
     'Reduced API response time by up to 40% through query and integration optimization.',
     'Improved SQL performance and overall system stability via targeted tuning.',
     'Delivered production-ready APIs with thorough testing and documentation.',
-    'Led end-to-end backend deployments including branching, pipelines, and production release.',
+    'Led end-to-end project deployments including branching, pipelines, and production release.',
     'Streamlined and secured data flow between environments with reliable monitoring.',
     'Applied AI-assisted workflows to speed up UI prototyping and backend validation.',
   ]
@@ -192,7 +210,7 @@ function App() {
               </span>
             </p>
             <p className="splash-sub">
-              Harsh Kumawat - Backend Developer
+              Harsh Kumawat - Software Developer Engineer
               <span className="loading-dots" aria-hidden="true">
                 <span className="dot" />
                 <span className="dot" />
@@ -225,10 +243,10 @@ function App() {
               feel instant.
             </h1>
             <p className="lead reveal" style={{ '--delay': '220ms' }}>
-              Jaipur-based backend developer with 2+ years shipping ASP.NET Core
+              Jaipur-based software developer with 3+ years shipping ASP.NET Core
               services, SQL optimization, and cloud-ready pipelines. Certified
               MongoDB Associate with AWS hands-on delivery. Now delivering
-              AI-assisted builds that accelerate UI iteration and harden backend
+              AI-assisted builds that accelerate UI iteration and harden software
               performance.
             </p>
             <p className="typing-line reveal" style={{ '--delay': '260ms' }}>
@@ -264,15 +282,15 @@ function App() {
             </div>
             <div className="hero-stats reveal" style={{ '--delay': '380ms' }}>
               <div className="stat-item">
-                <p className="stat-number">2+ years</p>
-                <p className="stat-label">Production backend</p>
+                <p className="stat-number">3+ years</p>
+                <p className="stat-label">Production Systems</p>
               </div>
               <div className="stat-item">
                 <p className="stat-number">40%</p>
                 <p className="stat-label">Faster API response</p>
               </div>
               <div className="stat-item">
-                <p className="stat-number">AWS + MongoDB</p>
+                <p className="stat-number">AWS + SSMS + MongoDB</p>
                 <p className="stat-label">Certified depth</p>
               </div>
             </div>
@@ -281,7 +299,7 @@ function App() {
           <div className="hero-stack">
             <div className="hero-card glow reveal" style={{ '--delay': '180ms' }}>
               <p className="card-label">Signature</p>
-              <p className="card-title">Backend Developer</p>
+              <p className="card-title">Software Developer Engineer</p>
               <p className="card-body">
                 Building efficient services, optimizing SQL, and scaling APIs for
                 production workloads.
@@ -310,19 +328,19 @@ function App() {
           <div className="marquee-inner">
             <div className="marquee-track">
               <span>Backend systems</span>
-              <span>API performance</span>
+              <span>Whatsapp API integrations</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
               <span>SQL optimization</span>
-              <span>CI/CD delivery</span>
+              <span>CI/CD</span>
             </div>
             <div className="marquee-track" aria-hidden="true">
               <span>Backend systems</span>
-              <span>API performance</span>
+              <span>Whatsapp API integration</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
               <span>SQL optimization</span>
-              <span>CI/CD delivery</span>
+              <span>CI/CD</span>
             </div>
           </div>
         </section>
@@ -381,7 +399,7 @@ function App() {
         <section id="skills" className="section">
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
             <p className="eyebrow">Core skills</p>
-            <h2 className="blur-text">Backend depth with cloud range.</h2>
+            <h2 className="blur-text">Projects depth with cloud range.</h2>
             <p>Technical breadth across APIs, data, and operations.</p>
           </div>
           <div className="grid skills-grid">
@@ -502,28 +520,32 @@ function App() {
         <section id="experience" className="section">
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
             <p className="eyebrow">Experience</p>
-            <h2 className="blur-text">Backend reliability in production.</h2>
+            <h2 className="blur-text">Building reliable production-grade software.</h2>
             <p>Driving API performance, stability, and data integrity.</p>
           </div>
-          <div className="card wide reveal" style={{ '--delay': '120ms' }}>
-            <div className="experience-head">
-              <div>
-                <h3>Backend Developer</h3>
-                <p>Autovyn Consultancy Pvt. Ltd., Jaipur, India</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%' }}>
+            {experiences.map((exp, expIdx) => (
+              <div className="card wide reveal" style={{ '--delay': `${120 + expIdx * 80}ms` }} key={exp.company}>
+                <div className="experience-head">
+                  <div>
+                    <h3>{exp.role}</h3>
+                    <p>{exp.company}</p>
+                  </div>
+                  <span className="pill">{exp.period}</span>
+                </div>
+                <ul className="clean-list">
+                  {exp.bullets.map((item, index) => (
+                    <li
+                      className="reveal"
+                      style={{ '--delay': `${140 + index * 70}ms` }}
+                      key={item}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <span className="pill">Sep 2023 - Present</span>
-            </div>
-            <ul className="clean-list">
-              {experienceBullets.map((item, index) => (
-                <li
-                  className="reveal"
-                  style={{ '--delay': `${140 + index * 70}ms` }}
-                  key={item}
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
+            ))}
           </div>
         </section>
 
@@ -585,7 +607,7 @@ function App() {
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
             <p className="eyebrow">Contact</p>
             <h2 className="blur-text">Let's build something sharp.</h2>
-            <p>Open to backend roles and product collaborations.</p>
+            <p>Open to software developer roles and product collaborations.</p>
           </div>
           <div className="card wide contact-card reveal" style={{ '--delay': '140ms' }}>
             <div>
@@ -622,7 +644,7 @@ function App() {
       </main>
 
       <footer className="footer reveal" style={{ '--delay': '0ms' }}>
-        <p>Harsh Kumawat - Backend Developer - Jaipur, India</p>
+        <p>Harsh Kumawat - Software Developer Engineer - Jaipur, India</p>
       </footer>
 
     </div>
