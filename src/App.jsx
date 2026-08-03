@@ -95,26 +95,26 @@ function App() {
 
   const skills = [
     {
-      title: 'Backend',
-      items: ['C#', 'ASP.NET Core Web API', 'Dapper', 'API Design', 'SQL Tuning'],
+      title: 'Backend & Frameworks',
+      items: ['C#', '.NET Framework', 'ASP.NET Core Web API', 'RESTful APIs', 'Microservices', 'Webhooks', 'Dapper'],
     },
     {
       title: 'Databases',
       items: [
         'Microsoft SQL Server',
         'PostgreSQL',
-        'MySQL',
         'MongoDB (Certified Associate)',
+        'Redis',
+        'MySQL',
       ],
     },
     {
-      title: 'Cloud & Ops',
+      title: 'AWS & Cloud Services',
       items: [
         'AWS EC2',
         'Lambda',
         'CloudWatch',
         'Glue',
-        'Azure',
         'SQS',
         'API Gateway',
         'Aurora & RDS',
@@ -122,74 +122,104 @@ function App() {
       ],
     },
     {
-      title: 'Workflow',
-      items: ['GitHub', 'CI/CD', 'Jira', 'Excel', 'Zendesk', 'Snyk', 'Sonar'],
+      title: 'Tools & Practices',
+      items: [
+        'Visual Studio',
+        'SSMS',
+        'Postman',
+        'Jira',
+        'Git & GitHub',
+        'MongoDB Compass',
+        'CI/CD Pipelines',
+        'Deployment Automation',
+      ],
     },
   ]
 
   const projects = [
     {
-      name: 'Niraniya Heritage Stones Jaipur',
-      description:
-        'Business website showcasing stone products with a clean catalog and inquiry-focused layout.',
-      link: 'https://niraniyaheritagestonesjaipur.vercel.app/',
-      stack: ['React', 'Vite'],
-    },
-    {
       name: 'Maruti CRM Insurance Portal',
       description:
-        'CRM platform to manage insurance workflows, improve customer relationships, and boost ops efficiency.',
-      link: 'https://msibplcrm.co.in',
-      stack: ['ASP.NET Core', 'SQL Server'],
+        'Architected an enterprise CRM platform to centralize insurance workflows, enhancing customer relationship management and operational efficiency across over 150 dealerships.',
+      link: 'http://msibplcrm.co.in/',
+      stack: ['.NET', 'SQL Server', 'AWS'],
     },
     {
       name: 'Service Marketing Reminder',
       description:
-        'Automated reminder system to drive customer engagement and timely service follow-ups.',
-      link: 'https://dealercrm.co.in',
-      stack: ['ASP.NET Core', 'SQL Server'],
+        'Created an automated customer reminder system delivering timely service follow-ups to over 20,000 customers.',
+      link: 'http://dealercrm.co.in/',
+      stack: ['.NET', 'SQL Server'],
+    },
+    {
+      name: 'Vehicle Health Card Blaster',
+      description:
+        'Programmed an autonomous messaging microservice utilizing .NET, Kaleyra APIs, Webhooks, and AWS SQS to reliably deliver over 10,000 health reports weekly at scale.',
+      link: null,
+      stack: ['.NET', 'Kaleyra', 'AWS SQS', 'Webhooks'],
+    },
+    {
+      name: 'Post Service Feedback (PSF) Blaster & Dealer PSF',
+      description:
+        'Spearheaded a high-volume bulk messaging pipeline utilizing SQL Server Agent scheduling, AWS Glue, and AWS Lambda to process and trigger over 100,000 daily customer feedback messages while synchronizing data across over 1,500 dealerships.',
+      link: 'http://psfcrm.dealercrm.co.in/',
+      stack: ['.NET', 'SQL Server', 'AWS Glue', 'AWS Lambda'],
     },
     {
       name: 'AutoVYN Connect',
       description:
-        'Attendance and leave management system with secure login/logout, leave tracking, and HR reporting.',
+        'Constructed production-ready backend modules to streamline attendance tracking, leave management, and real-time HR reporting for a workforce of over 5,000 employees.',
       link: null,
-      stack: ['.NET', 'MongoDB'],
+      stack: ['.NET', 'MongoDB', 'SQL Server'],
+    },
+    {
+      name: 'Ganesh Bhojnalya',
+      description:
+        'Engineered a web application for a family restaurant business, showcasing digital menu offerings, location details, and customer services.',
+      link: 'https://ganeshbhojnalya.vercel.app/',
+      stack: ['React', 'Vite', 'Tailwind CSS'],
+    },
+    {
+      name: 'Niraniya Heritage Stones Jaipur',
+      description:
+        'Crafted and deployed a showcase website for a family stone handicrafts business, highlighting handcrafted stone products and client inquiry workflows.',
+      link: 'https://niraniyaheritagestonesjaipur.vercel.app/',
+      stack: ['React', 'Vite', 'Tailwind CSS'],
     },
   ]
 
   const experiences = [
     {
-      role: 'Software Developer Engineer',
-      company: 'Autovyn Consultancy Pvt. Ltd., Jaipur, India',
-      period: 'Sep 2023 - Present',
+      role: 'Software Development Engineer | Backend Developer',
+      company: 'Autovyn Consultancy Pvt. Ltd.',
+      period: '09/2023 - Present',
       bullets: [
-        'Developed and maintained production systems ensuring database efficiency and reliability across production environments.',
-        'Optimized complex SQL queries and improved API response times by 40%.',
-        'Worked across SQL and NoSQL databases including MS SQL Server, PostgreSQL, MySQL, and MongoDB.',
-        'Administered SQL Server and PostgreSQL using Dapper for data access while supporting schema changes and data migrations.',
-        'Led full project lifecycle from data sourcing to deployment, including branching, merging, and CI/CD pipelines.',
+        'Planned and optimized scalable enterprise backend architectures utilizing .NET and SQL/NoSQL databases (Microsoft SQL Server, PostgreSQL, MySQL, MongoDB), supporting over 50,000 daily transactions.',
+        'Orchestrated the migration to a microservices architecture, optimizing complex SQL queries to reduce API response times by up to 40%.',
+        'Systematized core workflows by configuring SQL Server Agent jobs and scheduled messaging systems, managing zero-downtime production deployments across 3 active environments.',
+        'Architected the Vehicle Health Card Blaster module utilizing .NET, Kaleyra APIs, Wrapper APIs, Webhooks, and AWS SQS for scalable messaging, processing over 500 requests per minute.',
+        'Conceptualized and deployed the Post Service Feedback (PSF) Blaster, creating a queue-based bulk messaging system that seamlessly processes over 100,000 daily requests.',
+        'Integrated Dealer Post Service Feedback (PSF) pipelines leveraging .NET, SQL Server, AWS Glue, and AWS Lambda for reliable data synchronization across over 1,500 dealerships.',
+        'Streamlined mission-critical database workflows, improving data integrity and system monitoring, reducing data discrepancies by 99%.',
       ],
     },
     {
-      role: 'Software Developer Engineer',
+      role: 'Software Development Engineer',
       company: 'Dunnfox Technologies',
-      period: 'January 2023 – September 2023',
+      period: '01/2023 - 09/2023',
       bullets: [
-        'Built and delivered high-performance web applications and services, expanding technical capabilities.',
-        'Designed robust database schemas and optimized data flows to support responsive system operations.',
-        'Collaborated in cross-functional teams to troubleshoot complex technical challenges and deliver quality products.',
+        'Built core backend services, ensuring seamless third-party API integrations and highly efficient database management, accelerating data retrieval times by 30%.',
+        'Deployed reliable, production-ready APIs supported by comprehensive unit testing (achieving over 90% test coverage) and detailed technical documentation.',
       ],
     },
   ]
 
   const achievements = [
-    'Reduced API response time by up to 40% through query and integration optimization.',
-    'Improved SQL performance and overall system stability via targeted tuning.',
-    'Delivered production-ready APIs with thorough testing and documentation.',
-    'Led end-to-end project deployments including branching, pipelines, and production release.',
-    'Streamlined and secured data flow between environments with reliable monitoring.',
-    'Applied AI-assisted workflows to speed up UI prototyping and backend validation.',
+    'Reduced API response time by 40% through strategic architectural shifts and rigorous SQL query optimizations.',
+    'Improved database performance and system stability via targeted indexing and tuning, reducing query latency by over 50%.',
+    'Successfully directed full backend deployment cycles, maintaining a 0% failure rate across seamless production releases.',
+    'Pioneered scalable queue-based messaging pipelines for high-volume data processing with reliable message delivery.',
+    'Enhanced system security and proactive monitoring by implementing maintainable logging mechanisms, maintaining 99.9% uptime for core backend services.',
   ]
 
   const typedText = typePhrases[phraseIndex]
