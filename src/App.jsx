@@ -382,47 +382,39 @@ function App() {
             <p>Projects built to feel stable, secure, and dependable.</p>
           </div>
           <div className="grid">
-            {projects.map((project, index) => {
-              const offsetMap = ['140%', '70%', '-70%', '-140%']
-              const stackOffset = offsetMap[index % offsetMap.length]
-
-              return (
-                <article
-                  className="card stack-card"
-                  style={{
-                    '--stack-offset': stackOffset,
-                    '--stack-delay': `${index * 140}ms`,
-                  }}
-                  key={project.name}
-                >
-                  <div>
-                    <h3>{project.name}</h3>
-                    <p>{project.description}</p>
+            {projects.map((project, index) => (
+              <article
+                className="card reveal"
+                style={{ '--delay': `${(index % 4) * 100}ms` }}
+                key={project.name}
+              >
+                <div>
+                  <h3>{project.name}</h3>
+                  <p>{project.description}</p>
+                </div>
+                <div className="card-meta">
+                  <div className="tag-list">
+                    {project.stack.map((item) => (
+                      <span className="tag" key={item}>
+                        {item}
+                      </span>
+                    ))}
                   </div>
-                  <div className="card-meta">
-                    <div className="tag-list">
-                      {project.stack.map((item) => (
-                        <span className="tag" key={item}>
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                    {project.link ? (
-                      <a
-                        className="card-link"
-                        href={project.link}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Visit project
-                      </a>
-                    ) : (
-                      <span className="card-muted">Internal product</span>
-                    )}
-                  </div>
-                </article>
-              )
-            })}
+                  {project.link ? (
+                    <a
+                      className="card-link"
+                      href={project.link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Visit project →
+                    </a>
+                  ) : (
+                    <span className="card-muted">Enterprise Microservice</span>
+                  )}
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
