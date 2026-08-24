@@ -186,6 +186,13 @@ function App() {
       link: 'https://niraniyaheritagestonesjaipur.vercel.app/',
       stack: ['React', 'Vite', 'Tailwind CSS'],
     },
+    {
+      name: 'Royal Tailor Ambient Radio',
+      description:
+        'Developed an immersive retro Indian tailor shop ambient radio streaming nostalgic vintage Bollywood classics layered with realistic sewing clatter and rain ambience.',
+      link: 'https://royaltailor.vercel.app/',
+      stack: ['JavaScript', 'HTML5 Audio', 'YouTube API', 'CSS3'],
+    },
   ]
 
   const experiences = [
