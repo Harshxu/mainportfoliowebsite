@@ -95,8 +95,19 @@ function App() {
 
   const skills = [
     {
-      title: 'Backend & Frameworks',
-      items: ['C#', '.NET Framework', 'ASP.NET Core Web API', 'RESTful APIs', 'Microservices', 'Webhooks', 'Dapper'],
+      title: 'Full-Stack & Backend',
+      items: [
+        'C#',
+        '.NET Core / ASP.NET',
+        'React.js',
+        'JavaScript (ES6+)',
+        'TypeScript',
+        'HTML5 & CSS3',
+        'RESTful APIs',
+        'Microservices',
+        'Webhooks',
+        'Dapper',
+      ],
     },
     {
       title: 'Databases',
