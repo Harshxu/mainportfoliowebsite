@@ -1,16 +1,59 @@
-# React + Vite
+# 🚀 Harsh Kumawat — Full-Stack Developer & Quantitative Systems Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Live Site](https://img.shields.io/badge/Portfolio-Live-brightgreen)](https://harshkumawat.com/)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black?logo=three.js)](https://threejs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-12-EA4C89?logo=framer)](https://www.framer.com/motion/)
 
-Currently, two official plugins are available:
+> The primary personal portfolio website of **Harsh Kumawat**, showcasing enterprise full-stack engineering, algorithmic trading engines (STALKER), 3D interactive web applications, and UI/UX design systems.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Portfolio Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **🌐 3D Interactive Canvas**: Built with Three.js and `@react-three/fiber` / `@react-three/drei` for engaging interactive particle backgrounds.
+- **💼 Project Deep-Dives**: Interactive case studies covering algorithmic stock screeners, SaaS ERPs, 3D luxury portals, and retro web applications.
+- **📄 Extracted Resume & Bio**: Downloadable PDF resume and skill matrices.
+- **🎉 Interactive Micro-Interactions**: Custom celebration triggers (`canvas-confetti`), smooth navigation docks, and glassmorphic HUD elements.
+- **🔍 SEO & Performance Optimized**: Complete Open Graph metadata, sitemap.xml, robots.txt, and Google Search Console verification.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    App[App.jsx] --> Nav[Navbar & Floating Dock]
+    App --> Hero[Hero with 3D Three.js Canvas]
+    App --> About[About & Tech Stack Grid]
+    App --> Projects[Featured Projects Showcase]
+    App --> Experience[Experience & Timeline]
+    App --> Contact[Contact & Resume Download]
+    App --> Confetti[Canvas Confetti Trigger]
+```
+
+---
+
+## 🛠️ Tech Stack
+
+- **Core**: React 19, Vite 8, JavaScript
+- **3D & Canvas**: Three.js, React Three Fiber, React Three Drei
+- **Styling**: Tailwind CSS, PostCSS, Lucide React
+- **Animations**: Framer Motion 12, Canvas Confetti
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/Harshxu/mainportfoliowebsite.git
+cd mainportfoliowebsite
+
+# Install dependencies
+npm install
+
+# Start local development server
+npm run dev
+```
