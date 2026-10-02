@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Navbar from './Navbar'
+import ShaderAnimation from './ShaderAnimation'
 import './App.css'
 
 const typePhrases = [
@@ -13,15 +14,28 @@ const typePhrases = [
 function App() {
   const [splashHiding, setSplashHiding] = useState(false)
   const [splashHidden, setSplashHidden] = useState(false)
+  const [shaderActive, setShaderActive] = useState(false)
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    const hideTimer = setTimeout(() => setSplashHiding(true), 2100)
-    const removeTimer = setTimeout(() => setSplashHidden(true), 2700)
+    // Start shader veil right before splash begins dissolving
+    const shaderStartTimer = setTimeout(() => {
+      setShaderActive(true)
+    }, 1900)
+
+    const hideTimer = setTimeout(() => {
+      setSplashHiding(true)
+    }, 2100)
+
+    // Complete removal of splash overlay as the circular portal sweeps outward
+    const removeTimer = setTimeout(() => {
+      setSplashHidden(true)
+    }, 2500)
 
     return () => {
+      clearTimeout(shaderStartTimer)
       clearTimeout(hideTimer)
       clearTimeout(removeTimer)
     }
@@ -269,6 +283,13 @@ function App() {
         </div>
       )}
 
+      {shaderActive && (
+        <ShaderAnimation
+          duration={4500}
+          onComplete={() => setShaderActive(false)}
+        />
+      )}
+
       <div className="bg-layer">
         <div className="orb orb-one" />
         <div className="orb orb-two" />
@@ -276,6 +297,7 @@ function App() {
         <div className="grid-lines" />
         <div className="noise" />
       </div>
+
 
       <Navbar />
 
@@ -372,23 +394,29 @@ function App() {
           </div>
         </section>
 
-        <section className="marquee" aria-hidden="true">
+        <section className="marquee" aria-label="Core competencies ticker">
           <div className="marquee-inner">
             <div className="marquee-track">
               <span>Backend systems</span>
-              <span>Whatsapp API integrations</span>
+              <span>WhatsApp API integrations</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
               <span>SQL optimization</span>
-              <span>CI/CD</span>
+              <span>CI/CD pipelines</span>
+              <span>High-speed APIs</span>
+              <span>MongoDB indexing</span>
+              <span>AWS deployments</span>
             </div>
             <div className="marquee-track" aria-hidden="true">
               <span>Backend systems</span>
-              <span>Whatsapp API integration</span>
+              <span>WhatsApp API integrations</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
               <span>SQL optimization</span>
-              <span>CI/CD</span>
+              <span>CI/CD pipelines</span>
+              <span>High-speed APIs</span>
+              <span>MongoDB indexing</span>
+              <span>AWS deployments</span>
             </div>
           </div>
         </section>

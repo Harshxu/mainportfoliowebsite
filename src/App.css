@@ -210,12 +210,26 @@
   position: absolute;
   inset: 0;
   background-image: linear-gradient(
-      rgba(255, 255, 255, 0.06) 1px,
+      rgba(255, 255, 255, 0.14) 1px,
       transparent 1px
     ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 140px 140px;
-  opacity: 0.22;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(
+    circle at 0% 0%,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 250px,
+    rgba(0, 0, 0, 0.4) 450px,
+    transparent 650px
+  );
+  mask-image: radial-gradient(
+    circle at 0% 0%,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 250px,
+    rgba(0, 0, 0, 0.4) 450px,
+    transparent 650px
+  );
+  opacity: 1;
 }
 
 .noise {
@@ -231,8 +245,7 @@
   transform: translateZ(0);
 }
 
-/* Performance: reduce heavy paint layers */
-.grid-lines,
+/* Performance optimization */
 .noise {
   display: none;
 }
@@ -589,39 +602,64 @@
 }
 
 .marquee {
-  display: flex;
-  gap: 20px;
+  position: relative;
+  width: 100%;
+  display: block;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 22px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 0;
   margin-top: 6px;
   margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
   color: var(--ink-muted);
   white-space: nowrap;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
 }
 
 .marquee-inner {
   display: flex;
   width: max-content;
-  animation: marquee 18s linear infinite;
+  flex-shrink: 0;
+  will-change: transform;
+  animation: marquee 28s linear infinite !important;
+}
+
+.marquee:hover .marquee-inner {
+  animation-play-state: paused;
 }
 
 .marquee-track {
   display: flex;
-  gap: 32px;
+  align-items: center;
+  gap: 24px;
   white-space: nowrap;
-  padding-right: 32px;
+  padding-right: 24px;
+  flex-shrink: 0;
 }
 
 .marquee-track span {
-  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  color: rgba(240, 246, 252, 0.85);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  user-select: none;
+}
+
+.marquee-track span:hover {
+  border-color: rgba(96, 165, 250, 0.45);
+  background: rgba(96, 165, 250, 0.1);
+  color: #ffffff;
 }
 
 .section {
@@ -1254,9 +1292,11 @@
   }
 
   .orb,
-  .grid-lines,
   .noise {
     opacity: 0.12;
+  }
+  .grid-lines {
+    opacity: 0.85;
   }
 
 }
@@ -1265,7 +1305,6 @@
   .topbar::after,
   .hero-card,
   .stack-card,
-  .marquee-inner,
   .orb {
     animation: none;
   }
