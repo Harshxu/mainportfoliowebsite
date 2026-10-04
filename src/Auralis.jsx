@@ -151,9 +151,10 @@ export const Auralis = ({
     }
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25)
-      canvas.width = (container.clientWidth || window.innerWidth) * dpr
-      canvas.height = (container.clientHeight || window.innerHeight) * dpr
+      const isMobile = window.innerWidth <= 768
+      const dpr = isMobile ? 0.9 : Math.min(window.devicePixelRatio || 1, 1.25)
+      canvas.width = Math.round((container.clientWidth || window.innerWidth) * dpr)
+      canvas.height = Math.round((container.clientHeight || window.innerHeight) * dpr)
       gl.viewport(0, 0, canvas.width, canvas.height)
     }
 
@@ -164,12 +165,23 @@ export const Auralis = ({
     let raf
     let lastTime = performance.now()
     let accumulatedTime = 0
+    let isPaused = false
+
+    const handleVisibilityChange = () => {
+      isPaused = document.hidden
+      if (!isPaused) {
+        lastTime = performance.now()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     const colorArray = colorsKey ? colorsKey.split(',') : DEFAULT_COLORS
     const flatColors = new Float32Array(colorArray.slice(0, 3).flatMap(hexToRgb))
 
     const render = (now) => {
       raf = requestAnimationFrame(render)
+
+      if (isPaused) return
 
       const dt = Math.min((now - lastTime) * 0.001, 0.05)
       lastTime = now
@@ -195,6 +207,7 @@ export const Auralis = ({
 
     return () => {
       ro.disconnect()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       cancelAnimationFrame(raf)
       if (gl) {
         gl.deleteProgram(program)

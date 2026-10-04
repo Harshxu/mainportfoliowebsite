@@ -45,6 +45,46 @@ const sizeMap = {
   lg: 'w-80 h-96',
 }
 
+// Singleton pointer tracker with RAF throttling for desktop hover reflection
+let pointerListeners = new Set()
+let globalPointer = { x: '0', xp: '0', y: '0', yp: '0' }
+let rafId = null
+
+const handleGlobalPointerMove = (e) => {
+  globalPointer.x = e.clientX.toFixed(1)
+  globalPointer.xp = (e.clientX / window.innerWidth).toFixed(3)
+  globalPointer.y = e.clientY.toFixed(1)
+  globalPointer.yp = (e.clientY / window.innerHeight).toFixed(3)
+
+  if (!rafId) {
+    rafId = requestAnimationFrame(() => {
+      rafId = null
+      pointerListeners.forEach((fn) => fn(globalPointer))
+    })
+  }
+}
+
+let isGlobalListening = false
+function subscribePointer(cb) {
+  if (typeof window === 'undefined') return () => {}
+  // Skip global tracking on touch/mobile devices
+  if (!window.matchMedia('(hover: hover)').matches) return () => {}
+
+  pointerListeners.add(cb)
+  if (!isGlobalListening) {
+    window.addEventListener('pointermove', handleGlobalPointerMove, { passive: true })
+    isGlobalListening = true
+  }
+
+  return () => {
+    pointerListeners.delete(cb)
+    if (pointerListeners.size === 0 && isGlobalListening) {
+      window.removeEventListener('pointermove', handleGlobalPointerMove)
+      isGlobalListening = false
+    }
+  }
+}
+
 const GlowCard = ({
   children,
   className = '',
@@ -62,19 +102,14 @@ const GlowCard = ({
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
-    // Window-level pointer tracking for ambient proximity reflection
-    const syncPointer = (e) => {
-      const { clientX: x, clientY: y } = e
+    return subscribePointer((p) => {
       if (cardRef.current) {
-        cardRef.current.style.setProperty('--x', x.toFixed(1))
-        cardRef.current.style.setProperty('--xp', (x / window.innerWidth).toFixed(3))
-        cardRef.current.style.setProperty('--y', y.toFixed(1))
-        cardRef.current.style.setProperty('--yp', (y / window.innerHeight).toFixed(3))
+        cardRef.current.style.setProperty('--x', p.x)
+        cardRef.current.style.setProperty('--xp', p.xp)
+        cardRef.current.style.setProperty('--y', p.y)
+        cardRef.current.style.setProperty('--yp', p.yp)
       }
-    }
-
-    document.addEventListener('pointermove', syncPointer, { passive: true })
-    return () => document.removeEventListener('pointermove', syncPointer)
+    })
   }, [])
 
   // Local card pointer tracking for razor-sharp cursor spotlight & 3D tilt

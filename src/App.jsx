@@ -271,7 +271,7 @@ function App() {
     : ''
 
   return (
-    <div className="page">
+    <div className="page-shell">
       {!splashHidden && (
         <div className={`splash ${splashHiding ? 'splash-hide' : ''}`}>
           <Velaris
@@ -316,7 +316,8 @@ function App() {
       <Navbar />
 
       <main>
-        <section className="hero">
+        <div className="page page-hero">
+          <section className="hero">
           <div className="hero-copy">
             <div className="hero-copy-main">
               <div className="welcome">
@@ -485,10 +486,10 @@ function App() {
               <span>CI/CD pipelines</span>
               <span>High-speed APIs</span>
               <span>MongoDB indexing</span>
-              <span>AWS deployments</span>
             </div>
           </div>
         </section>
+      </div>
 
         <Timeline
           title="Selected Projects"
@@ -499,7 +500,8 @@ function App() {
           backgroundColor="transparent"
         />
 
-        <section id="skills" className="section">
+        <div className="page page-content">
+          <section id="skills" className="section">
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
             <p className="eyebrow">Core skills</p>
             <h2 className="blur-text">Projects depth with cloud range.</h2>
@@ -786,6 +788,7 @@ function App() {
             </div>
           </GlowCard>
         </section>
+        </div>
       </main>
 
       <footer className="footer reveal" style={{ '--delay': '0ms' }}>
