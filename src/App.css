@@ -11,19 +11,21 @@
   padding: 0 24px;
   display: flex;
   flex-direction: column;
-  gap: 80px;
+  gap: 48px;
   position: relative;
   z-index: 1;
 }
 
 .page-hero {
-  padding-top: 125px;
-  padding-bottom: 20px;
+  padding-top: 105px;
+  padding-bottom: 8px;
+  gap: 24px;
 }
 
 .page-content {
-  padding-top: 40px;
-  padding-bottom: 80px;
+  padding-top: 24px;
+  padding-bottom: 60px;
+  gap: 48px;
 }
 
 .timeline-section {
@@ -549,9 +551,9 @@
 .hero-details-row {
   display: grid;
   grid-template-columns: minmax(0, 1.14fr) minmax(0, 0.86fr);
-  gap: 46px;
-  margin-top: 16px;
-  padding-top: 24px;
+  gap: 32px;
+  margin-top: 4px;
+  padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
   z-index: 2;
@@ -678,9 +680,9 @@
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 18px 0;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  padding: 12px 0;
+  margin-top: 0;
+  margin-bottom: 0;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 0.72rem;
@@ -1528,17 +1530,19 @@
 
   .page {
     padding: 0 16px !important;
-    gap: 34px !important;
+    gap: 28px !important;
   }
 
   .page-hero {
-    padding-top: 90px !important;
-    padding-bottom: 12px !important;
+    padding-top: 80px !important;
+    padding-bottom: 6px !important;
+    gap: 18px !important;
   }
 
   .page-content {
-    padding-top: 24px !important;
-    padding-bottom: 48px !important;
+    padding-top: 16px !important;
+    padding-bottom: 40px !important;
+    gap: 28px !important;
   }
 
   .section {

@@ -1,7 +1,6 @@
 import {
   useLayoutEffect,
   useRef,
-  useSyncExternalStore,
 } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -39,32 +38,6 @@ function useGSAP(callback, options) {
     cleanupRef.current = typeof ret === 'function' ? ret : undefined
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
-}
-
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-
-function subscribeToReducedMotion(callback) {
-  if (typeof window === 'undefined') return () => {}
-  const mediaQueryList = window.matchMedia(REDUCED_MOTION_QUERY)
-  mediaQueryList.addEventListener('change', callback)
-  return () => mediaQueryList.removeEventListener('change', callback)
-}
-
-function getReducedMotionSnapshot() {
-  if (typeof window === 'undefined') return false
-  return window.matchMedia?.(REDUCED_MOTION_QUERY)?.matches ?? false
-}
-
-function getServerReducedMotionSnapshot() {
-  return false
-}
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToReducedMotion,
-    getReducedMotionSnapshot,
-    getServerReducedMotionSnapshot,
-  )
 }
 
 const topJourneyData = [
@@ -156,7 +129,6 @@ export default function Timeline({
 }) {
   const sectionRef = useRef(null)
   const wholeSliderRef = useRef(null)
-  const reducedMotion = usePrefersReducedMotion()
 
   const sectionStyle = {
     color: textColor,
@@ -191,40 +163,35 @@ export default function Timeline({
         return -(sliderWidth - viewWidth + (isMobile ? 30 : 100))
       }
 
-      // Reset initial styles
+      // Reset initial styles - ALWAYS START LINE AT 0% FOR DYNAMIC SCROLL
       gsap.set(slider, { x: 0 })
-      gsap.set('.journey-line', { width: reducedMotion ? '100%' : '0%' })
+      gsap.set('.journey-line', { width: '0%' })
 
       const items = allJourneyItems
 
-      if (reducedMotion || isMobile) {
-        // On mobile or reduced motion: keep all project names, tags, stems, and dots 100% visible at all times!
-        items.forEach((item) => {
-          gsap.set(`.jl-${item.id}`, { scaleY: 1, opacity: 1 })
-          gsap.set(`.jd-${item.id}`, { scale: 1 })
-          gsap.set(`.title-${item.id}`, { opacity: 1, y: 0 })
-          gsap.set(`.description-${item.id}`, { opacity: 1, y: 0 })
-          gsap.set(`.card-box-${item.id}`, { opacity: 1, y: 0 })
+      if (isMobile) {
+        items.forEach((item, index) => {
+          gsap.set(`.jl-${item.id}`, { opacity: index === 0 ? 1 : 0.45 })
+          gsap.set(`.jd-${item.id}`, { scale: index === 0 ? 1.2 : 0.95 })
+          gsap.set(`.title-${item.id}`, { opacity: index === 0 ? 1 : 0.55, y: 0 })
+          gsap.set(`.description-${item.id}`, { opacity: index === 0 ? 1 : 0.5, y: 0 })
+          gsap.set(`.card-box-${item.id}`, { opacity: index === 0 ? 1 : 0.6, y: 0 })
         })
       } else {
         items.forEach((item, index) => {
-          const isTop = topJourneyData.some((topItem) => topItem.id === item.id)
-          gsap.set(`.jl-${item.id}`, {
-            scaleY: index === 0 ? 1 : 0,
-            transformOrigin: isTop ? 'bottom bottom' : 'top top',
-          })
-          gsap.set(`.jd-${item.id}`, { scale: index === 0 ? 1.2 : 0.85 })
+          gsap.set(`.jl-${item.id}`, { opacity: index === 0 ? 1 : 0.4 })
+          gsap.set(`.jd-${item.id}`, { scale: index === 0 ? 1.2 : 0.95 })
           gsap.set(`.title-${item.id}`, {
-            opacity: index === 0 ? 1 : 0.35,
-            y: index === 0 ? 0 : 14,
+            opacity: index === 0 ? 1 : 0.45,
+            y: index === 0 ? 0 : 4,
           })
           gsap.set(`.description-${item.id}`, {
-            opacity: index === 0 ? 1 : 0.3,
-            y: index === 0 ? 0 : 10,
+            opacity: index === 0 ? 1 : 0.4,
+            y: index === 0 ? 0 : 3,
           })
           gsap.set(`.card-box-${item.id}`, {
-            opacity: index === 0 ? 1 : 0.4,
-            y: index === 0 ? 0 : (isTop ? -6 : 6),
+            opacity: index === 0 ? 1 : 0.5,
+            y: 0,
           })
         })
       }
@@ -254,9 +221,10 @@ export default function Timeline({
         0,
       )
 
-      // 2. Active glowing progress line draws forward along with scroll
-      masterTl.to(
+      // 2. Active glowing progress line draws forward synchronously with scroll
+      masterTl.fromTo(
         '.journey-line',
+        { width: '0%' },
         {
           width: '100%',
           ease: 'none',
@@ -265,97 +233,102 @@ export default function Timeline({
         0,
       )
 
-      if (!reducedMotion) {
-        // Spaced fractions along the scroll timeline for 8 alternating items
-        const itemFractions = [0.08, 0.18, 0.30, 0.42, 0.54, 0.66, 0.78, 0.90]
+      // Dynamically calculate the EXACT instant the laser line touches each project's vertical line & dot
+      const railEl = section.querySelector('.timeline-rail')
+      const railRect = railEl ? railEl.getBoundingClientRect() : null
+      const railLeft = railRect ? railRect.left : 0
+      const railWidth = railRect && railRect.width > 50 ? railRect.width : slider.scrollWidth
 
-        items.forEach((item, index) => {
-          const lineSelector = `.jl-${item.id}`
-          const dotSelector = `.jd-${item.id}`
-          const titleSelector = `.title-${item.id}`
-          const descSelector = `.description-${item.id}`
-          const cardSelector = `.card-box-${item.id}`
+      items.forEach((item, index) => {
+        const lineSelector = `.jl-${item.id}`
+        const dotSelector = `.jd-${item.id}`
+        const titleSelector = `.title-${item.id}`
+        const descSelector = `.description-${item.id}`
+        const cardSelector = `.card-box-${item.id}`
 
-          const fraction = itemFractions[index] || 0.1 * index
-          const stepDuration = 0.08
+        // Measure exact horizontal distance from start of track rail to this card's line/dot
+        const lineEl = section.querySelector(lineSelector)
+        let touchFraction = (index + 0.4) / items.length
+        if (lineEl && railWidth > 0) {
+          const lineRect = lineEl.getBoundingClientRect()
+          const dist = (lineRect.left + lineRect.width / 2) - railLeft
+          touchFraction = Math.max(0.01, Math.min(0.98, dist / railWidth))
+        }
 
-          // Milestone dot activates as the laser line reaches it
-          masterTl.to(
-            dotSelector,
-            {
-              scale: 1.5,
-              backgroundColor: '#ffffff',
-              boxShadow: '0 0 25px rgba(96, 165, 250, 1), 0 0 45px rgba(56, 189, 248, 0.85)',
-              duration: stepDuration * 0.4,
-              ease: 'power2.out',
-            },
-            fraction,
-          )
-          masterTl.to(
-            dotSelector,
-            {
-              scale: 1.15,
-              backgroundColor: '#60a5fa',
-              boxShadow: '0 0 16px rgba(96, 165, 250, 0.75)',
-              duration: stepDuration * 0.4,
-              ease: 'power2.out',
-            },
-            fraction + stepDuration * 0.4,
-          )
+        const stepDuration = 0.04
 
-          if (!isMobile) {
-            // Vertical stem shoots down/up with energy
-            masterTl.to(
-              lineSelector,
-              {
-                scaleY: 1,
-                opacity: 1,
-                boxShadow: '0 0 14px rgba(96, 165, 250, 0.85)',
-                duration: stepDuration * 0.5,
-                ease: 'power2.out',
-              },
-              fraction,
-            )
+        // Milestone dot activates the EXACT INSTANT the laser line reaches it
+        masterTl.to(
+          dotSelector,
+          {
+            scale: 1.5,
+            backgroundColor: '#ffffff',
+            boxShadow: '0 0 22px rgba(96, 165, 250, 1), 0 0 38px rgba(56, 189, 248, 0.95)',
+            duration: stepDuration * 0.5,
+            ease: 'power2.out',
+          },
+          touchFraction,
+        )
+        masterTl.to(
+          dotSelector,
+          {
+            scale: 1.15,
+            backgroundColor: '#60a5fa',
+            boxShadow: '0 0 14px rgba(96, 165, 250, 0.75)',
+            duration: stepDuration * 0.5,
+            ease: 'power2.out',
+          },
+          touchFraction + stepDuration * 0.5,
+        )
 
-            // Whole card reveals & brightens
-            masterTl.to(
-              cardSelector,
-              {
-                opacity: 1,
-                y: 0,
-                duration: stepDuration * 0.7,
-                ease: 'power2.out',
-              },
-              fraction + stepDuration * 0.1,
-            )
+        // Vertical side stem illuminates with intense glow
+        masterTl.to(
+          lineSelector,
+          {
+            opacity: 1,
+            boxShadow: '0 0 16px rgba(96, 165, 250, 0.95), 0 0 28px rgba(56, 189, 248, 0.65)',
+            duration: stepDuration,
+            ease: 'power2.out',
+          },
+          touchFraction,
+        )
 
-            // Title slides and illuminates into crisp white
-            masterTl.to(
-              titleSelector,
-              {
-                y: 0,
-                opacity: 1,
-                color: '#ffffff',
-                duration: stepDuration * 0.8,
-                ease: 'power2.out',
-              },
-              fraction + stepDuration * 0.1,
-            )
+        // Whole card reveals & brightens
+        masterTl.to(
+          cardSelector,
+          {
+            opacity: 1,
+            duration: stepDuration,
+            ease: 'power2.out',
+          },
+          touchFraction,
+        )
 
-            // Description slides and reveals cleanly
-            masterTl.to(
-              descSelector,
-              {
-                y: 0,
-                opacity: 1,
-                duration: stepDuration * 0.8,
-                ease: 'power2.out',
-              },
-              fraction + stepDuration * 0.15,
-            )
-          }
-        })
-      }
+        // Title slides into place and illuminates into crisp white
+        masterTl.to(
+          titleSelector,
+          {
+            y: 0,
+            opacity: 1,
+            color: '#ffffff',
+            duration: stepDuration,
+            ease: 'power2.out',
+          },
+          touchFraction,
+        )
+
+        // Description slides and reveals cleanly
+        masterTl.to(
+          descSelector,
+          {
+            y: 0,
+            opacity: 1,
+            duration: stepDuration,
+            ease: 'power2.out',
+          },
+          touchFraction,
+        )
+      })
 
       const handleResize = () => ScrollTrigger.refresh()
       window.addEventListener('resize', handleResize)
@@ -364,7 +337,7 @@ export default function Timeline({
         window.removeEventListener('resize', handleResize)
       }
     },
-    { dependencies: [reducedMotion], scope: sectionRef },
+    { dependencies: [], scope: sectionRef },
   )
 
   return (
@@ -375,7 +348,7 @@ export default function Timeline({
       style={sectionStyle}
     >
       {/* Container with generous clearance below fixed navbar and balanced bottom spacing */}
-      <div className="h-full w-full flex items-center justify-start overflow-hidden relative pt-[140px] pb-[40px] max-[600px]:pt-[75px] max-[600px]:pb-[20px] box-border">
+      <div className="h-full w-full flex items-center justify-start overflow-hidden relative pt-[96px] pb-[28px] max-[600px]:pt-[68px] max-[600px]:pb-[16px] box-border">
         <div
           ref={wholeSliderRef}
           className="flex h-full items-center gap-[4vw] px-[5vw] max-[600px]:gap-[8vw] max-[600px]:px-[6vw] will-change-transform shrink-0"
@@ -386,27 +359,27 @@ export default function Timeline({
             style={{ width: 'max-content' }}
           >
             {/* Center Timeline Track Line */}
-            <div className="w-full absolute left-0 top-[50%] -translate-y-1/2 h-[14px] flex items-center pointer-events-none z-10">
+            <div className="w-full absolute left-0 top-[50%] -translate-y-1/2 h-[14px] flex items-center pointer-events-none z-10 timeline-rail">
               {/* Full Background Track Rail */}
-              <div className="w-full absolute left-0 h-[2.5px] bg-blue-500/30 rounded-full" />
+              <div className="w-full absolute left-0 h-[2px] bg-blue-500/20 rounded-full" />
               
               {/* Start Dot */}
               <div
-                className="size-[10px] max-[600px]:size-[8px] rounded-full bg-blue-400 border border-blue-300 shadow-[0_0_14px_rgba(96,165,250,0.9)] shrink-0 z-10"
+                className="size-[9px] max-[600px]:size-[7px] rounded-full bg-blue-400 border border-blue-300 shadow-[0_0_12px_rgba(96,165,250,0.8)] shrink-0 z-10"
               />
 
               {/* Active Glowing Laser Progress Line (Advances synchronously with scroll) */}
               <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-[3.5px] rounded-full journey-line bg-gradient-to-r from-blue-600 via-cyan-400 to-white shadow-[0_0_20px_rgba(96,165,250,1),0_0_40px_rgba(56,189,248,0.7)] z-20 pointer-events-none"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-[3px] rounded-full journey-line bg-gradient-to-r from-blue-600 via-cyan-400 to-white shadow-[0_0_18px_rgba(96,165,250,1),0_0_35px_rgba(56,189,248,0.7)] z-20 pointer-events-none"
                 style={{ width: '0%' }}
               >
                 {/* Leading Laser Tracer Orb */}
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 size-[14px] max-[600px]:size-[10px] rounded-full bg-white shadow-[0_0_20px_#ffffff,0_0_35px_#38bdf8,0_0_50px_#3b82f6] border-2 border-cyan-300 z-30" />
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 size-[12px] max-[600px]:size-[9px] rounded-full bg-white shadow-[0_0_16px_#ffffff,0_0_30px_#38bdf8,0_0_45px_#3b82f6] border-2 border-cyan-300 z-30" />
               </div>
 
               {/* End Dot */}
               <div
-                className="absolute right-0 size-[10px] max-[600px]:size-[8px] rounded-full bg-blue-500/30 border border-blue-500/40 shrink-0 z-10"
+                className="absolute right-0 size-[9px] max-[600px]:size-[7px] rounded-full bg-blue-500/30 border border-blue-500/40 shrink-0 z-10"
               />
             </div>
 
@@ -425,60 +398,62 @@ export default function Timeline({
                 {topJourneyData.map((item) => (
                   <div
                     key={`top-${item.id}`}
-                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-end pb-[70px] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pb-[36px] card-box-${item.id} transition-opacity duration-300`}
+                    className={`relative shrink-0 w-[27vw] max-[600px]:w-[80vw] max-[600px]:max-w-[330px] card-box-${item.id} transition-opacity duration-300 pb-3 max-[600px]:pb-2`}
                   >
-                    {/* Stem & Node (Compact connector to central track) */}
-                    <div className="absolute left-[2vw] max-[600px]:left-3 bottom-0 pointer-events-none flex flex-col items-center">
-                      <div
-                        className={`h-[54px] max-[600px]:h-[26px] w-[2px] origin-bottom rounded-full shadow-[0_0_10px_rgba(76,120,255,0.7)] jl-${item.id}`}
-                        style={activeStyle}
-                      />
-                      <div
-                        className={`size-[10px] max-[600px]:size-[8px] translate-y-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
-                        style={activeStyle}
-                      />
-                    </div>
+                    <div className="flex items-stretch gap-3">
+                      {/* Left Vertical Accent Line & Node (Fixed alongside project texts!) */}
+                      <div className="relative flex flex-col items-center shrink-0 w-[12px] pt-1">
+                        <div
+                          className={`size-[9px] max-[600px]:size-[7px] rounded-full shrink-0 transition-transform duration-300 jd-${item.id}`}
+                          style={activeStyle}
+                        />
+                        <div
+                          className={`w-[2px] flex-1 rounded-full mt-1.5 jl-${item.id}`}
+                          style={activeStyle}
+                        />
+                      </div>
 
-                    {/* Content */}
-                    <div className="space-y-[0.5vw] max-[600px]:space-y-1">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.7rem]">
-                          {item.tag}
-                        </span>
-                        {item.link && (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.75rem]"
-                          >
-                            Live ↗
-                          </a>
+                      {/* Content */}
+                      <div className="flex-1 space-y-1 pb-1">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.7rem]">
+                            {item.tag}
+                          </span>
+                          {item.link && (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.75rem]"
+                            >
+                              Live ↗
+                            </a>
+                          )}
+                        </div>
+                        <h4
+                          className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.05rem] max-[600px]:font-bold max-[600px]:leading-snug`}
+                        >
+                          {item.title}
+                        </h4>
+                        <p
+                          className={`description-${item.id} text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.8rem] max-[600px]:leading-tight max-[600px]:line-clamp-3`}
+                          style={mutedTextStyle}
+                        >
+                          {item.content}
+                        </p>
+                        {item.stack && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {item.stack.map((tech) => (
+                              <span
+                                key={tech}
+                                className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.68rem] max-[600px]:px-2 max-[600px]:py-0.5"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
-                      <h4
-                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.05rem] max-[600px]:font-bold max-[600px]:leading-snug`}
-                      >
-                        {item.title}
-                      </h4>
-                      <p
-                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.8rem] max-[600px]:leading-tight max-[600px]:line-clamp-3`}
-                        style={mutedTextStyle}
-                      >
-                        {item.content}
-                      </p>
-                      {item.stack && (
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {item.stack.map((tech) => (
-                            <span
-                              key={tech}
-                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.68rem] max-[600px]:px-2 max-[600px]:py-0.5"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -503,60 +478,62 @@ export default function Timeline({
                 {bottomJourneyData.map((item) => (
                   <div
                     key={`bottom-${item.id}`}
-                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-start pt-[70px] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pt-[36px] card-box-${item.id} transition-opacity duration-300`}
+                    className={`relative shrink-0 w-[27vw] max-[600px]:w-[80vw] max-[600px]:max-w-[330px] card-box-${item.id} transition-opacity duration-300 pt-3 max-[600px]:pt-2`}
                   >
-                    {/* Stem & Node (Compact connector to central track) */}
-                    <div className="absolute left-[2vw] max-[600px]:left-3 top-0 pointer-events-none flex flex-col items-center">
-                      <div
-                        className={`size-[10px] max-[600px]:size-[8px] -translate-y-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
-                        style={activeStyle}
-                      />
-                      <div
-                        className={`h-[54px] max-[600px]:h-[26px] w-[2px] origin-top rounded-full shadow-[0_0_10px_rgba(76,120,255,0.7)] jl-${item.id}`}
-                        style={activeStyle}
-                      />
-                    </div>
+                    <div className="flex items-stretch gap-3">
+                      {/* Left Vertical Accent Line & Node (Dot at bottom for bottom milestones) */}
+                      <div className="relative flex flex-col items-center shrink-0 w-[12px] pb-1">
+                        <div
+                          className={`w-[2px] flex-1 rounded-full mb-1.5 jl-${item.id}`}
+                          style={activeStyle}
+                        />
+                        <div
+                          className={`size-[9px] max-[600px]:size-[7px] rounded-full shrink-0 transition-transform duration-300 jd-${item.id}`}
+                          style={activeStyle}
+                        />
+                      </div>
 
-                    {/* Content */}
-                    <div className="space-y-[0.5vw] max-[600px]:space-y-1 pt-[0.2vw]">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.7rem]">
-                          {item.tag}
-                        </span>
-                        {item.link && (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.75rem]"
-                          >
-                            Live ↗
-                          </a>
+                      {/* Content */}
+                      <div className="flex-1 space-y-1 pt-0.5">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.7rem]">
+                            {item.tag}
+                          </span>
+                          {item.link && (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.75rem]"
+                            >
+                              Live ↗
+                            </a>
+                          )}
+                        </div>
+                        <h4
+                          className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.05rem] max-[600px]:font-bold max-[600px]:leading-snug`}
+                        >
+                          {item.title}
+                        </h4>
+                        <p
+                          className={`description-${item.id} text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.8rem] max-[600px]:leading-tight max-[600px]:line-clamp-3`}
+                          style={mutedTextStyle}
+                        >
+                          {item.content}
+                        </p>
+                        {item.stack && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {item.stack.map((tech) => (
+                              <span
+                                key={tech}
+                                className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.68rem] max-[600px]:px-2 max-[600px]:py-0.5"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
-                      <h4
-                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.05rem] max-[600px]:font-bold max-[600px]:leading-snug`}
-                      >
-                        {item.title}
-                      </h4>
-                      <p
-                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.8rem] max-[600px]:leading-tight max-[600px]:line-clamp-3`}
-                        style={mutedTextStyle}
-                      >
-                        {item.content}
-                      </p>
-                      {item.stack && (
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {item.stack.map((tech) => (
-                            <span
-                              key={tech}
-                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.68rem] max-[600px]:px-2 max-[600px]:py-0.5"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
