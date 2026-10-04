@@ -425,16 +425,16 @@ export default function Timeline({
                 {topJourneyData.map((item) => (
                   <div
                     key={`top-${item.id}`}
-                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-end pb-[1.2vw] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pb-2 card-box-${item.id} transition-opacity duration-300`}
+                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-end pb-[70px] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pb-[36px] card-box-${item.id} transition-opacity duration-300`}
                   >
-                    {/* Stem & Node */}
-                    <div className="w-full absolute left-0 bottom-0 top-0 h-full pointer-events-none">
+                    {/* Stem & Node (Compact connector to central track) */}
+                    <div className="absolute left-[2vw] max-[600px]:left-3 bottom-0 pointer-events-none flex flex-col items-center">
                       <div
-                        className={`size-[10px] max-[600px]:size-[8px] -translate-x-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
+                        className={`h-[54px] max-[600px]:h-[26px] w-[2px] origin-bottom rounded-full shadow-[0_0_10px_rgba(76,120,255,0.7)] jl-${item.id}`}
                         style={activeStyle}
                       />
                       <div
-                        className={`h-[90%] w-[1.5px] origin-bottom rounded-full jl-${item.id}`}
+                        className={`size-[10px] max-[600px]:size-[8px] translate-y-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
                         style={activeStyle}
                       />
                     </div>
@@ -503,16 +503,16 @@ export default function Timeline({
                 {bottomJourneyData.map((item) => (
                   <div
                     key={`bottom-${item.id}`}
-                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-start pt-[1.2vw] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pt-2 card-box-${item.id} transition-opacity duration-300`}
+                    className={`relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-start pt-[70px] max-[600px]:w-[80vw] max-[600px]:max-w-[320px] max-[600px]:px-3 max-[600px]:pt-[36px] card-box-${item.id} transition-opacity duration-300`}
                   >
-                    {/* Stem & Node */}
-                    <div className="w-full absolute left-0 bottom-[-1%] h-full pointer-events-none">
+                    {/* Stem & Node (Compact connector to central track) */}
+                    <div className="absolute left-[2vw] max-[600px]:left-3 top-0 pointer-events-none flex flex-col items-center">
                       <div
-                        className={`h-[90%] origin-top w-[1.5px] rounded-full jl-${item.id}`}
+                        className={`size-[10px] max-[600px]:size-[8px] -translate-y-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
                         style={activeStyle}
                       />
                       <div
-                        className={`size-[10px] max-[600px]:size-[8px] -translate-x-1/2 relative aspect-square rounded-full transition-transform duration-300 jd-${item.id}`}
+                        className={`h-[54px] max-[600px]:h-[26px] w-[2px] origin-top rounded-full shadow-[0_0_10px_rgba(76,120,255,0.7)] jl-${item.id}`}
                         style={activeStyle}
                       />
                     </div>
