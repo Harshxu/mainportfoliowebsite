@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
+  ScrollTrigger.config({ ignoreMobileResize: true })
 }
 
 function useGSAP(callback, options) {
@@ -175,30 +176,29 @@ export default function Timeline({
       const slider = wholeSliderRef.current
       if (!section || !slider) return
 
-      const isMobile = window.innerWidth < 600
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
 
       // Calculate how far horizontally the slider must travel so all projects pass through
       const getScrollDist = () => {
         const sliderWidth = slider.scrollWidth
         const viewWidth = window.innerWidth
-        return Math.max(sliderWidth - viewWidth + (isMobile ? 60 : 160), viewWidth * 1.6)
+        return Math.max(sliderWidth - viewWidth + (isMobile ? 120 : 160), viewWidth * 1.6)
       }
 
       const getTargetX = () => {
         const sliderWidth = slider.scrollWidth
         const viewWidth = window.innerWidth
-        return -(sliderWidth - viewWidth + (isMobile ? 40 : 120))
+        return -(sliderWidth - viewWidth + (isMobile ? 30 : 120))
       }
-
-      const totalScrollDist = getScrollDist()
 
       // Reset initial styles
       gsap.set(slider, { x: 0 })
-      gsap.set('.journey-line', { width: reducedMotion ? '98%' : '0%' })
+      gsap.set('.journey-line', { width: reducedMotion ? '100%' : '0%' })
 
       const items = allJourneyItems
 
-      if (reducedMotion) {
+      if (reducedMotion || isMobile) {
+        // On mobile or reduced motion: keep all project names, tags, stems, and dots 100% visible at all times!
         items.forEach((item) => {
           gsap.set(`.jl-${item.id}`, { scaleY: 1 })
           gsap.set(`.jd-${item.id}`, { scale: 1 })
@@ -225,8 +225,8 @@ export default function Timeline({
           pin: true,
           pinSpacing: true,
           start: 'top top',
-          end: () => `+=${totalScrollDist}`,
-          scrub: 0.8, // Smooth scrub
+          end: () => `+=${getScrollDist()}`,
+          scrub: 0.25, // Immediate 1:1 realtime scrub
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -243,19 +243,19 @@ export default function Timeline({
         0,
       )
 
-      if (!reducedMotion) {
-        // 2. Journey track line draws out across the milestones
-        masterTl.to(
-          '.journey-line',
-          {
-            width: isMobile ? '75%' : '98%',
-            ease: 'none',
-            duration: 1,
-          },
-          0,
-        )
+      // 2. Active glowing progress line draws forward along with scroll
+      masterTl.to(
+        '.journey-line',
+        {
+          width: '100%',
+          ease: 'none',
+          duration: 1,
+        },
+        0,
+      )
 
-        // 3. Sequential milestones activations as they arrive on screen
+      if (!reducedMotion) {
+        // 3. Sequential milestones activations as line advances through the projects
         const count = items.length
         items.forEach((item, index) => {
           const lineSelector = `.jl-${item.id}`
@@ -263,45 +263,78 @@ export default function Timeline({
           const titleSelector = `.title-${item.id}`
           const descSelector = `.description-${item.id}`
 
-          const startFraction = 0.05 + (index / (count + 0.6)) * 0.85
-          const stepDuration = 0.12
+          const startFraction = 0.04 + (index / (count + 0.5)) * 0.88
+          const stepDuration = 0.10
 
+          // Milestone dot activates as the laser line reaches it
           masterTl.to(
-            lineSelector,
-            { scaleY: 1, duration: stepDuration * 0.5, ease: 'power2.out' },
+            dotSelector,
+            { scale: 1.35, duration: stepDuration * 0.4, ease: 'back.out(2)' },
             startFraction,
           )
           masterTl.to(
             dotSelector,
-            { scale: 1, duration: stepDuration * 0.5, ease: 'back.out(2)' },
-            startFraction,
+            { scale: 1, duration: stepDuration * 0.4, ease: 'power2.out' },
+            startFraction + stepDuration * 0.4,
           )
-          masterTl.to(
-            titleSelector,
-            { y: 0, opacity: 1, duration: stepDuration * 0.8, ease: 'power2.out' },
-            startFraction + stepDuration * 0.1,
-          )
-          masterTl.to(
-            descSelector,
-            { y: 0, opacity: 1, duration: stepDuration * 0.8, ease: 'power2.out' },
-            startFraction + stepDuration * 0.2,
-          )
+
+          if (!isMobile) {
+            masterTl.to(
+              lineSelector,
+              { scaleY: 1, duration: stepDuration * 0.5, ease: 'power2.out' },
+              startFraction,
+            )
+            masterTl.to(
+              titleSelector,
+              { y: 0, opacity: 1, duration: stepDuration * 0.8, ease: 'power2.out' },
+              startFraction + stepDuration * 0.1,
+            )
+            masterTl.to(
+              descSelector,
+              { y: 0, opacity: 1, duration: stepDuration * 0.8, ease: 'power2.out' },
+              startFraction + stepDuration * 0.2,
+            )
+          }
         })
       }
 
       // Map trackpad horizontal gesture to page scroll so horizontal swipe scrolls timeline
       const handleWheel = (e) => {
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 8) {
-          window.scrollBy({ top: e.deltaX * 1.2, behavior: 'auto' })
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 4) {
+          window.scrollBy({ top: e.deltaX * 1.1, behavior: 'auto' })
+        }
+      }
+
+      // Map touch horizontal swipe to vertical scroll so swiping moves timeline on mobile
+      let touchStartX = 0
+      let touchStartY = 0
+
+      const handleTouchStart = (e) => {
+        if (!e.touches || e.touches.length === 0) return
+        touchStartX = e.touches[0].clientX
+        touchStartY = e.touches[0].clientY
+      }
+
+      const handleTouchMove = (e) => {
+        if (!e.touches || e.touches.length === 0) return
+        const deltaX = touchStartX - e.touches[0].clientX
+        const deltaY = touchStartY - e.touches[0].clientY
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 5) {
+          window.scrollBy({ top: deltaX * 1.3, behavior: 'auto' })
+          touchStartX = e.touches[0].clientX
         }
       }
 
       section.addEventListener('wheel', handleWheel, { passive: true })
+      section.addEventListener('touchstart', handleTouchStart, { passive: true })
+      section.addEventListener('touchmove', handleTouchMove, { passive: true })
       const handleResize = () => ScrollTrigger.refresh()
       window.addEventListener('resize', handleResize)
 
       return () => {
         section.removeEventListener('wheel', handleWheel)
+        section.removeEventListener('touchstart', handleTouchStart)
+        section.removeEventListener('touchmove', handleTouchMove)
         window.removeEventListener('resize', handleResize)
       }
     },
@@ -327,18 +360,27 @@ export default function Timeline({
             style={{ width: 'max-content' }}
           >
             {/* Center Timeline Track Line */}
-            <div className="w-full absolute left-0 top-[50%] -translate-y-1/2 flex items-center h-fit pointer-events-none">
+            <div className="w-full absolute left-0 top-[50%] -translate-y-1/2 h-[12px] flex items-center pointer-events-none z-10">
+              {/* Full Background Track Rail */}
+              <div className="w-full absolute left-0 h-[2px] bg-blue-500/25 rounded-full" />
+              
+              {/* Start Dot */}
               <div
-                className="h-[.8vw] w-[.8vw] max-[600px]:h-[2.2vw] max-[600px]:w-[2.2vw] rounded-full shadow-[0_0_14px_rgba(76,120,255,0.8)]"
-                style={activeStyle}
+                className="size-[10px] max-[600px]:size-[8px] rounded-full bg-blue-500/60 border border-blue-400/80 shadow-[0_0_12px_rgba(76,120,255,0.7)] shrink-0 z-10"
               />
+
+              {/* Active Glowing Laser Progress Line (Advances with scroll) */}
               <div
-                className="h-px w-[0%] rounded-full journey-line shadow-[0_0_10px_rgba(76,120,255,0.6)]"
-                style={activeStyle}
-              />
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-[3px] rounded-full journey-line bg-gradient-to-r from-blue-600 via-blue-400 to-cyan-300 shadow-[0_0_18px_rgba(96,165,250,0.9),0_0_35px_rgba(59,130,246,0.6)] z-20 pointer-events-none"
+                style={{ width: '0%' }}
+              >
+                {/* Leading Laser Tracer Orb */}
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 size-[12px] max-[600px]:size-[10px] rounded-full bg-white shadow-[0_0_18px_#60a5fa,0_0_30px_#3b82f6] border-2 border-blue-400 z-30" />
+              </div>
+
+              {/* End Dot */}
               <div
-                className="h-[.8vw] w-[.8vw] max-[600px]:h-[2.2vw] max-[600px]:w-[2.2vw] rounded-full shadow-[0_0_14px_rgba(76,120,255,0.8)]"
-                style={activeStyle}
+                className="absolute right-0 size-[10px] max-[600px]:size-[8px] rounded-full bg-blue-500/30 border border-blue-500/40 shrink-0 z-10"
               />
             </div>
 
@@ -353,28 +395,28 @@ export default function Timeline({
                 </h2>
               </div>
 
-              <div className="flex h-full items-end gap-x-[12vw] max-[600px]:gap-x-[26vw]">
+              <div className="flex h-full items-end gap-x-[12vw] max-[600px]:gap-x-[20vw]">
                 {topJourneyData.map((item) => (
                   <div
                     key={`top-${item.id}`}
-                    className="relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-end pb-[1.2vw] max-[600px]:w-[70vw] max-[600px]:px-[5vw]"
+                    className="relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-end pb-[1.2vw] max-[600px]:w-[78vw] max-[600px]:max-w-[340px] max-[600px]:px-4 max-[600px]:pb-2"
                   >
                     {/* Stem & Node */}
                     <div className="w-full absolute left-0 bottom-0 top-0 h-full pointer-events-none">
                       <div
-                        className={`size-[0.85vw] max-[600px]:size-[2.2vw] -translate-x-1/2 relative aspect-square rounded-full jd-${item.id}`}
+                        className={`size-[0.85vw] max-[600px]:size-[10px] -translate-x-1/2 relative aspect-square rounded-full jd-${item.id}`}
                         style={activeStyle}
                       />
                       <div
-                        className={`h-[90%] w-px origin-bottom rounded-full jl-${item.id}`}
+                        className={`h-[90%] w-px max-[600px]:w-[1.5px] origin-bottom rounded-full jl-${item.id}`}
                         style={activeStyle}
                       />
                     </div>
 
                     {/* Content */}
-                    <div className="space-y-[0.5vw]">
+                    <div className="space-y-[0.5vw] max-[600px]:space-y-1.5">
                       <div className="flex items-center gap-3">
-                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[3.2vw]">
+                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.72rem]">
                           {item.tag}
                         </span>
                         {item.link && (
@@ -382,19 +424,19 @@ export default function Timeline({
                             href={item.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[3vw]"
+                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.78rem]"
                           >
                             Live ↗
                           </a>
                         )}
                       </div>
                       <h4
-                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[5.5vw]`}
+                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.18rem] max-[600px]:font-bold max-[600px]:leading-snug`}
                       >
                         {item.title}
                       </h4>
                       <p
-                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[3.8vw]`}
+                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.84rem] max-[600px]:leading-normal`}
                         style={mutedTextStyle}
                       >
                         {item.content}
@@ -404,7 +446,7 @@ export default function Timeline({
                           {item.stack.map((tech) => (
                             <span
                               key={tech}
-                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[2.6vw]"
+                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.72rem] max-[600px]:px-2.5 max-[600px]:py-0.5"
                             >
                               {tech}
                             </span>
@@ -431,28 +473,28 @@ export default function Timeline({
                 </p>
               </div>
 
-              <div className="flex h-full items-start gap-x-[16vw] ml-[8vw] max-[600px]:gap-x-[26vw] max-[600px]:ml-[8vw]">
+              <div className="flex h-full items-start gap-x-[16vw] ml-[8vw] max-[600px]:gap-x-[20vw] max-[600px]:ml-[6vw]">
                 {bottomJourneyData.map((item) => (
                   <div
                     key={`bottom-${item.id}`}
-                    className="relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-start pt-[1.2vw] max-[600px]:w-[70vw] max-[600px]:px-[5vw]"
+                    className="relative h-full w-[26vw] shrink-0 px-[2vw] flex flex-col justify-start pt-[1.2vw] max-[600px]:w-[78vw] max-[600px]:max-w-[340px] max-[600px]:px-4 max-[600px]:pt-2"
                   >
                     {/* Stem & Node */}
                     <div className="w-full absolute left-0 bottom-[-1%] h-full pointer-events-none">
                       <div
-                        className={`h-[90%] origin-top w-px rounded-full max-[600px]:h-full jl-${item.id}`}
+                        className={`h-[90%] origin-top w-px max-[600px]:w-[1.5px] rounded-full max-[600px]:h-full jl-${item.id}`}
                         style={activeStyle}
                       />
                       <div
-                        className={`size-[0.85vw] max-[600px]:size-[2.2vw] -translate-x-1/2 relative w-auto aspect-square rounded-full jd-${item.id}`}
+                        className={`size-[0.85vw] max-[600px]:size-[10px] -translate-x-1/2 relative w-auto aspect-square rounded-full jd-${item.id}`}
                         style={activeStyle}
                       ></div>
                     </div>
 
                     {/* Content */}
-                    <div className="space-y-[0.5vw] pt-[0.2vw]">
+                    <div className="space-y-[0.5vw] max-[600px]:space-y-1.5 pt-[0.2vw]">
                       <div className="flex items-center gap-3">
-                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[3.2vw]">
+                        <span className="text-[0.85vw] font-mono uppercase tracking-widest text-blue-400 font-semibold max-[600px]:text-[0.72rem]">
                           {item.tag}
                         </span>
                         {item.link && (
@@ -460,19 +502,19 @@ export default function Timeline({
                             href={item.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[3vw]"
+                            className="text-[0.8vw] text-blue-300 hover:text-white transition-colors underline max-[600px]:text-[0.78rem]"
                           >
                             Live ↗
                           </a>
                         )}
                       </div>
                       <h4
-                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[5.5vw]` }
+                        className={`title-${item.id} text-[1.7vw] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] max-[600px]:text-[1.18rem] max-[600px]:font-bold max-[600px]:leading-snug`}
                       >
                         {item.title}
                       </h4>
                       <p
-                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[3.8vw]`}
+                        className={`description-${item.id} w-[95%] text-[0.95vw] leading-[1.35] text-neutral-300 max-[600px]:text-[0.84rem] max-[600px]:leading-normal`}
                         style={mutedTextStyle}
                       >
                         {item.content}
@@ -482,7 +524,7 @@ export default function Timeline({
                           {item.stack.map((tech) => (
                             <span
                               key={tech}
-                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[2.6vw]"
+                              className="text-[0.72vw] px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 max-[600px]:text-[0.72rem] max-[600px]:px-2.5 max-[600px]:py-0.5"
                             >
                               {tech}
                             </span>
