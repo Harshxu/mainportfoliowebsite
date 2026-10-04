@@ -17,9 +17,9 @@
 }
 
 .page-hero {
-  padding-top: 68px;
-  padding-bottom: 6px;
-  gap: 18px;
+  padding-top: 135px;
+  padding-bottom: 16px;
+  gap: 28px;
 }
 
 .page-content {
@@ -1542,9 +1542,9 @@
   }
 
   .page-hero {
-    padding-top: 66px !important;
-    padding-bottom: 6px !important;
-    gap: 16px !important;
+    padding-top: 105px !important;
+    padding-bottom: 12px !important;
+    gap: 18px !important;
   }
 
   .page-content {
