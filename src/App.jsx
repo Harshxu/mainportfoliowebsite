@@ -1,41 +1,47 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Navbar from './Navbar'
-import ShaderAnimation from './ShaderAnimation'
+import GlowCard from './GlowCard'
+import Velaris from './Velaris'
+import Auralis from './Auralis'
+import ShinyButton from './ShinyButton'
+import Timeline from './Timeline'
 import './App.css'
 
 const typePhrases = [
-  'scalable APIs',
   'data pipelines',
+  'scalable APIs',
   'cloud automations',
   'high-speed SQL',
 ]
 
+// Stable color palette constant to prevent Velaris WebGL rebuilds on re-render
+const VELARIS_COLORS = ['#1d4ed8', '#1e3a8a', '#081438', '#010206']
+
+const AURALIS_RED_COLORS = ['#ef4444', '#dc2626', '#b91c1c']
+
 function App() {
   const [splashHiding, setSplashHiding] = useState(false)
   const [splashHidden, setSplashHidden] = useState(false)
-  const [shaderActive, setShaderActive] = useState(false)
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    // Start shader veil right before splash begins dissolving
-    const shaderStartTimer = setTimeout(() => {
-      setShaderActive(true)
-    }, 1900)
+    // The sweep line crosses HARSH.EXE calmly over 2200ms.
+    // Right as it finishes (2190ms), begin the dreamy blur and dissolve transition:
+    const transitionStart = 2190
 
     const hideTimer = setTimeout(() => {
       setSplashHiding(true)
-    }, 2100)
+    }, transitionStart)
 
-    // Complete removal of splash overlay as the circular portal sweeps outward
+    // Complete removal of splash overlay after the smooth 1.1s blur/fade dissolve:
     const removeTimer = setTimeout(() => {
       setSplashHidden(true)
-    }, 2500)
+    }, 3300)
 
     return () => {
-      clearTimeout(shaderStartTimer)
       clearTimeout(hideTimer)
       clearTimeout(removeTimer)
     }
@@ -97,10 +103,17 @@ function App() {
           }
         })
       },
-      { threshold: 0.15 }
+      { threshold: 0.05, rootMargin: '50px 0px 50px 0px' }
     )
 
-    elements.forEach((el) => observer.observe(el))
+    elements.forEach((el) => {
+      const rect = el.getBoundingClientRect()
+      if (rect.top < window.innerHeight) {
+        el.classList.add('reveal-in')
+      } else {
+        observer.observe(el)
+      }
+    })
 
     return () => observer.disconnect()
   }, [])
@@ -109,7 +122,7 @@ function App() {
 
   const skills = [
     {
-      title: 'Full-Stack & Backend',
+      title: 'Full-Stack (.NET)',
       items: [
         'C#',
         '.NET Core / ASP.NET',
@@ -150,7 +163,6 @@ function App() {
       title: 'Tools & Practices',
       items: [
         'Visual Studio',
-        'SSMS',
         'Postman',
         'Jira',
         'Git & GitHub',
@@ -193,7 +205,7 @@ function App() {
     {
       name: 'AutoVYN Connect',
       description:
-        'Constructed production-ready backend modules to streamline attendance tracking, leave management, and real-time HR reporting for a workforce of over 5,000 employees.',
+        'Constructed production-ready full-stack and API modules to streamline attendance tracking, leave management, and real-time HR reporting for a workforce of over 5,000 employees.',
       link: null,
       stack: ['.NET', 'MongoDB', 'SQL Server'],
     },
@@ -222,11 +234,11 @@ function App() {
 
   const experiences = [
     {
-      role: 'Software Development Engineer | Backend Developer',
+      role: 'Software Development Engineer',
       company: 'Autovyn Consultancy Pvt. Ltd.',
       period: '09/2023 - Present',
       bullets: [
-        'Planned and optimized scalable enterprise backend architectures utilizing .NET and SQL/NoSQL databases (Microsoft SQL Server, PostgreSQL, MySQL, MongoDB), supporting over 50,000 daily transactions.',
+        'Planned and optimized scalable enterprise software architectures utilizing .NET and SQL/NoSQL databases (Microsoft SQL Server, PostgreSQL, MySQL, MongoDB), supporting over 50,000 daily transactions.',
         'Orchestrated the migration to a microservices architecture, optimizing complex SQL queries to reduce API response times by up to 40%.',
         'Systematized core workflows by configuring SQL Server Agent jobs and scheduled messaging systems, managing zero-downtime production deployments across 3 active environments.',
         'Architected the Vehicle Health Card Blaster module utilizing .NET, Kaleyra APIs, Wrapper APIs, Webhooks, and AWS SQS for scalable messaging, processing over 500 requests per minute.',
@@ -240,7 +252,7 @@ function App() {
       company: 'Dunnfox Technologies',
       period: '01/2023 - 09/2023',
       bullets: [
-        'Built core backend services, ensuring seamless third-party API integrations and highly efficient database management, accelerating data retrieval times by 30%.',
+        'Built core software services and APIs, ensuring seamless third-party integrations and highly efficient database management, accelerating data retrieval times by 30%.',
         'Deployed reliable, production-ready APIs supported by comprehensive unit testing (achieving over 90% test coverage) and detailed technical documentation.',
       ],
     },
@@ -249,9 +261,9 @@ function App() {
   const achievements = [
     'Reduced API response time by 40% through strategic architectural shifts and rigorous SQL query optimizations.',
     'Improved database performance and system stability via targeted indexing and tuning, reducing query latency by over 50%.',
-    'Successfully directed full backend deployment cycles, maintaining a 0% failure rate across seamless production releases.',
+    'Successfully directed full production deployment cycles, maintaining a 0% failure rate across seamless releases.',
     'Pioneered scalable queue-based messaging pipelines for high-volume data processing with reliable message delivery.',
-    'Enhanced system security and proactive monitoring by implementing maintainable logging mechanisms, maintaining 99.9% uptime for core backend services.',
+    'Enhanced system security and proactive monitoring by implementing maintainable logging mechanisms, maintaining 99.9% uptime for core production services.',
   ]
 
   const typedText = typePhrases[phraseIndex]
@@ -262,8 +274,14 @@ function App() {
     <div className="page">
       {!splashHidden && (
         <div className={`splash ${splashHiding ? 'splash-hide' : ''}`}>
-          <div className="splash-glow splash-glow-one" />
-          <div className="splash-glow splash-glow-two" />
+          <Velaris
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            height="100vh"
+            bg="#000000"
+            colors={VELARIS_COLORS}
+            speed={1.6}
+            grain={0.25}
+          />
           <div className="splash-noise" />
           <div className="splash-content">
             <p className="splash-title">
@@ -283,19 +301,15 @@ function App() {
         </div>
       )}
 
-      {shaderActive && (
-        <ShaderAnimation
-          duration={4500}
-          onComplete={() => setShaderActive(false)}
+      <div className="bg-layer" aria-hidden="true">
+        <Auralis
+          className="w-full h-full pointer-events-none"
+          height="100%"
+          colors={AURALIS_RED_COLORS}
+          speed={0.42}
+          grain={0.48}
         />
-      )}
-
-      <div className="bg-layer">
-        <div className="orb orb-one" />
-        <div className="orb orb-two" />
-        <div className="orb orb-three" />
         <div className="grid-lines" />
-        <div className="noise" />
       </div>
 
 
@@ -303,29 +317,26 @@ function App() {
 
       <main>
         <section className="hero">
-          <div className="hero-copy reveal" style={{ '--delay': '80ms' }}>
-            <div className="welcome">
-              <span className="welcome-line" />
-              <span>Welcome to my lab</span>
+          <div className="hero-copy">
+            <div className="hero-copy-main">
+              <div className="welcome">
+                <span className="welcome-line" />
+                <span>Welcome to my lab</span>
+              </div>
+              <h1>
+                Building <span>high-performance APIs</span> and data systems that
+                feel instant.
+              </h1>
+              <p className="lead">
+                Jaipur-based software developer with 3+ years shipping ASP.NET Core
+                services, SQL optimization, and cloud-ready pipelines. Certified
+                MongoDB Associate with AWS hands-on delivery. Now delivering
+                AI-assisted builds that accelerate UI iteration and harden software
+                performance.
+              </p>
             </div>
-            <h1 className="blur-text reveal" style={{ '--delay': '140ms' }}>
-              Building <span>high-performance APIs</span> and data systems that
-              feel instant.
-            </h1>
-            <p className="lead reveal" style={{ '--delay': '220ms' }}>
-              Jaipur-based software developer with 3+ years shipping ASP.NET Core
-              services, SQL optimization, and cloud-ready pipelines. Certified
-              MongoDB Associate with AWS hands-on delivery. Now delivering
-              AI-assisted builds that accelerate UI iteration and harden software
-              performance.
-            </p>
-            <p className="typing-line reveal" style={{ '--delay': '260ms' }}>
-              Shipping <span className="typing">{typedText}</span>
-              <span className="cursor" aria-hidden="true">
-                |
-              </span>
-            </p>
-            <div className="hero-actions reveal" style={{ '--delay': '300ms' }}>
+
+            <div className="hero-actions">
               <a className="primary" href="#work">
                 View projects
               </a>
@@ -340,64 +351,122 @@ function App() {
                 Download resume
               </a>
             </div>
-            <div className="hero-meta reveal" style={{ '--delay': '340ms' }}>
-              <div>
-                <p className="meta-title">Now</p>
-                <p>Autovyn Consultancy Pvt. Ltd. (Sep 2023 - Present)</p>
-              </div>
-              <div>
-                <p className="meta-title">Focus</p>
-                <p>API performance, data integrity, and CI/CD reliability.</p>
-              </div>
-            </div>
-            <div className="hero-stats reveal" style={{ '--delay': '380ms' }}>
-              <div className="stat-item">
-                <p className="stat-number">3+ years</p>
-                <p className="stat-label">Production Systems</p>
-              </div>
-              <div className="stat-item">
-                <p className="stat-number">40%</p>
-                <p className="stat-label">Faster API response</p>
-              </div>
-              <div className="stat-item">
-                <p className="stat-number">AWS + SSMS + MongoDB</p>
-                <p className="stat-label">Certified depth</p>
-              </div>
-            </div>
           </div>
 
           <div className="hero-stack">
-            <div className="hero-card glow reveal" style={{ '--delay': '180ms' }}>
-              <p className="card-label">Signature</p>
-              <p className="card-title">Software Developer Engineer</p>
-              <p className="card-body">
-                Building efficient services, optimizing SQL, and scaling APIs for
-                production workloads.
-              </p>
-              <div className="tag-list">
-                <span className="tag">ASP.NET Core</span>
-                <span className="tag">SQL Server</span>
-                <span className="tag">MongoDB</span>
-                <span className="tag">AWS</span>
+            <div className="hero-cards-main">
+              {/* 1. Signature Card */}
+              <GlowCard
+                customSize
+                glowColor="blue"
+                className="hero-card glow"
+              >
+                <div className="card-header-row">
+                  <p className="card-label">Signature</p>
+                  <span className="card-pill-badge card-pill-blue">Full-Stack (.NET)</span>
+                </div>
+                <p className="card-title">Software Developer Engineer</p>
+                <p className="card-body">
+                  Building efficient services, optimizing SQL, and scaling APIs for
+                  production workloads.
+                </p>
+                <div className="tag-list">
+                  <ShinyButton size="sm">ASP.NET Core</ShinyButton>
+                  <ShinyButton size="sm">SQL Server</ShinyButton>
+                  <ShinyButton size="sm">MongoDB</ShinyButton>
+                  <ShinyButton size="sm">AWS</ShinyButton>
+                </div>
+              </GlowCard>
+
+              {/* 2. Middle Row: Certified + Impact Twin Cards */}
+              <div className="hero-subgrid">
+                <GlowCard
+                  customSize
+                  glowColor="blue"
+                  className="hero-card glow"
+                >
+                  <p className="card-label">Certified</p>
+                  <p className="card-title">MongoDB Associate</p>
+                  <p className="card-body">Schema design & query optimization.</p>
+                </GlowCard>
+                <GlowCard
+                  customSize
+                  glowColor="blue"
+                  className="hero-card glow"
+                >
+                  <p className="card-label">Impact</p>
+                  <p className="card-title">40% Faster APIs</p>
+                  <p className="card-body">Delivered measurable latency wins.</p>
+                </GlowCard>
               </div>
+
+              {/* 3. Highlights Card */}
+              <GlowCard
+                customSize
+                glowColor="blue"
+                className="hero-card glow"
+              >
+                <div className="card-header-row">
+                  <p className="card-label">Highlights</p>
+                  <span className="card-pill-badge">Core Architecture</span>
+                </div>
+                <p className="card-title">C# .NET 8 • Microservices • Cloud</p>
+                <p className="card-body">
+                  High-throughput REST APIs, asynchronous queue pipelines, Docker containers & automated CI/CD.
+                </p>
+                <div className="highlight-chips-row">
+                  <span className="highlight-chip">Microservices</span>
+                  <span className="highlight-chip">Docker</span>
+                  <span className="highlight-chip">Redis</span>
+                  <span className="highlight-chip">AWS SQS</span>
+                  <span className="highlight-chip">CI/CD</span>
+                </div>
+              </GlowCard>
             </div>
-            <div className="hero-card glow reveal" style={{ '--delay': '260ms' }}>
-              <p className="card-label">Certified</p>
-              <p className="card-title">MongoDB Associate</p>
-              <p className="card-body">Schema design, query optimization.</p>
-            </div>
-            <div className="hero-card glow reveal" style={{ '--delay': '340ms' }}>
-              <p className="card-label">Impact</p>
-              <p className="card-title">40% Faster APIs</p>
-              <p className="card-body">Delivered measurable performance wins.</p>
+
+            {/* Live Typing / Shipping Animation Under Right Cards */}
+            <div className="hero-typing-box">
+              <span className="typing-prefix">Shipping</span>{' '}
+              <span className="typing">{typedText}</span>
+              <span className="cursor" aria-hidden="true">
+                |
+              </span>
             </div>
           </div>
         </section>
 
+        {/* Details Row (Meta & Stats) */}
+        <div className="hero-details-row">
+          <div className="hero-meta">
+            <div>
+              <p className="meta-title">Now</p>
+              <p>Autovyn Consultancy Pvt. Ltd. (Sep 2023 - Present)</p>
+            </div>
+            <div>
+              <p className="meta-title">Focus</p>
+              <p>API performance, data integrity, and CI/CD reliability.</p>
+            </div>
+          </div>
+          <div className="hero-stats">
+            <div className="stat-item">
+              <p className="stat-number">3+ years</p>
+              <p className="stat-label">Production Systems</p>
+            </div>
+            <div className="stat-item">
+              <p className="stat-number">40%</p>
+              <p className="stat-label">Faster API response</p>
+            </div>
+            <div className="stat-item">
+              <p className="stat-number">AWS + SSMS + MongoDB</p>
+              <p className="stat-label">Certified depth</p>
+            </div>
+          </div>
+        </div>
+
         <section className="marquee" aria-label="Core competencies ticker">
           <div className="marquee-inner">
             <div className="marquee-track">
-              <span>Backend systems</span>
+              <span>Full-stack systems</span>
               <span>WhatsApp API integrations</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
@@ -408,7 +477,7 @@ function App() {
               <span>AWS deployments</span>
             </div>
             <div className="marquee-track" aria-hidden="true">
-              <span>Backend systems</span>
+              <span>Full-stack systems</span>
               <span>WhatsApp API integrations</span>
               <span>Data reliability</span>
               <span>Cloud readiness</span>
@@ -421,48 +490,14 @@ function App() {
           </div>
         </section>
 
-        <section id="work" className="section">
-          <div className="section-head reveal" style={{ '--delay': '0ms' }}>
-            <p className="eyebrow">Selected work</p>
-            <h2 className="blur-text">Systems that stay fast under pressure.</h2>
-            <p>Projects built to feel stable, secure, and dependable.</p>
-          </div>
-          <div className="grid">
-            {projects.map((project, index) => (
-              <article
-                className="card reveal"
-                style={{ '--delay': `${(index % 4) * 100}ms` }}
-                key={project.name}
-              >
-                <div>
-                  <h3>{project.name}</h3>
-                  <p>{project.description}</p>
-                </div>
-                <div className="card-meta">
-                  <div className="tag-list">
-                    {project.stack.map((item) => (
-                      <span className="tag" key={item}>
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                  {project.link ? (
-                    <a
-                      className="card-link"
-                      href={project.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Visit project →
-                    </a>
-                  ) : (
-                    <span className="card-muted">Enterprise Microservice</span>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <Timeline
+          title="Selected Projects"
+          periodLabel="Production Systems"
+          activeColor="#4c78ff"
+          textColor="#ffffff"
+          mutedTextColor="rgba(247, 247, 251, 0.78)"
+          backgroundColor="transparent"
+        />
 
         <section id="skills" className="section">
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
@@ -472,7 +507,9 @@ function App() {
           </div>
           <div className="grid skills-grid">
             {skills.map((group, index) => (
-              <div
+              <GlowCard
+                customSize
+                glowColor={['blue', 'purple', 'green', 'yellow'][index % 4]}
                 className="card soft reveal"
                 style={{ '--delay': `${index * 80}ms` }}
                 key={group.title}
@@ -485,7 +522,7 @@ function App() {
                     </span>
                   ))}
                 </div>
-              </div>
+              </GlowCard>
             ))}
           </div>
         </section>
@@ -494,7 +531,7 @@ function App() {
           <div className="section-head reveal" style={{ '--delay': '0ms' }}>
             <p className="eyebrow">Technologies</p>
             <h2 className="blur-text">Stacks I ship with.</h2>
-            <p>Modern tools I use for frontend polish and backend reliability.</p>
+            <p>Modern tools I use for frontend polish and system reliability.</p>
           </div>
           <div className="tech-grid reveal" style={{ '--delay': '120ms' }}>
             {[
@@ -555,7 +592,7 @@ function App() {
             <h2 className="blur-text">AI-augmented builds, faster delivery.</h2>
             <p>
               I use AI tools to accelerate research, prototype UI, and validate
-              backend logic while keeping code quality and reliability first.
+              core application logic while keeping code quality and reliability first.
             </p>
           </div>
           <div className="grid">
@@ -563,24 +600,29 @@ function App() {
               {
                 title: 'AI-Assisted Frontend',
                 text: 'Rapid UI iteration, animation concepts, and responsive layout exploration.',
+                color: 'blue',
               },
               {
-                title: 'AI-Assisted Backend',
+                title: 'AI-Assisted Systems & APIs',
                 text: 'API design checks, query optimization ideas, and edge-case coverage.',
+                color: 'purple',
               },
               {
                 title: 'Tools I Use',
                 text: 'ChatGPT, GitHub Copilot, and AI research for quicker validation.',
+                color: 'green',
               },
             ].map((item, index) => (
-              <div
+              <GlowCard
+                customSize
+                glowColor={item.color}
                 className="card soft reveal"
                 style={{ '--delay': `${index * 90}ms` }}
                 key={item.title}
               >
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
-              </div>
+              </GlowCard>
             ))}
           </div>
         </section>
@@ -593,7 +635,13 @@ function App() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%' }}>
             {experiences.map((exp, expIdx) => (
-              <div className="card wide reveal" style={{ '--delay': `${120 + expIdx * 80}ms` }} key={exp.company}>
+              <GlowCard
+                customSize
+                glowColor="blue"
+                className="card wide reveal"
+                style={{ '--delay': `${120 + expIdx * 80}ms` }}
+                key={exp.company}
+              >
                 <div className="experience-head">
                   <div>
                     <h3>{exp.role}</h3>
@@ -612,7 +660,7 @@ function App() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </GlowCard>
             ))}
           </div>
         </section>
@@ -628,24 +676,43 @@ function App() {
               {
                 title: 'MongoDB Certified Associate Developer',
                 text: 'Hands-on expertise in schema design and query performance.',
+                badge: 'Certification',
+                color: 'green',
+                tag: 'MongoDB',
               },
               {
                 title: 'AWS Community Day',
-                text: 'Participation Certificate',
+                text: 'Participation Certificate & Cloud Architecture',
+                badge: 'Workshop',
+                color: 'yellow',
+                tag: 'AWS Cloud',
               },
               {
                 title: 'Master of Computer Applications',
                 text: 'Vivekananda Global University, Jaipur',
+                badge: 'Degree',
+                color: 'blue',
+                tag: 'MCA',
               },
             ].map((item, index) => (
-              <div
+              <GlowCard
+                customSize
+                glowColor={item.color}
                 className="card soft reveal"
                 style={{ '--delay': `${index * 90}ms` }}
                 key={item.title}
               >
+                <div className="card-top-badge">
+                  <span className={`tag credential-tag credential-tag-${item.color}`}>
+                    {item.badge}
+                  </span>
+                </div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
-              </div>
+                <div className="card-meta">
+                  <span className="card-muted">{item.tag}</span>
+                </div>
+              </GlowCard>
             ))}
           </div>
         </section>
@@ -656,7 +723,12 @@ function App() {
             <h2 className="blur-text">Results that made systems faster.</h2>
             <p>Impact-focused outcomes from recent work.</p>
           </div>
-          <div className="card wide reveal" style={{ '--delay': '120ms' }}>
+          <GlowCard
+            customSize
+            glowColor="purple"
+            className="card wide reveal"
+            style={{ '--delay': '120ms' }}
+          >
             <ul className="clean-list">
               {achievements.map((item, index) => (
                 <li
@@ -668,7 +740,7 @@ function App() {
                 </li>
               ))}
             </ul>
-          </div>
+          </GlowCard>
         </section>
 
         <section id="contact" className="section contact">
@@ -677,7 +749,12 @@ function App() {
             <h2 className="blur-text">Let's build something sharp.</h2>
             <p>Open to software developer roles and product collaborations.</p>
           </div>
-          <div className="card wide contact-card reveal" style={{ '--delay': '140ms' }}>
+          <GlowCard
+            customSize
+            glowColor="blue"
+            className="card wide contact-card reveal"
+            style={{ '--delay': '140ms' }}
+          >
             <div>
               <p className="contact-label">Email</p>
               <a href="mailto:harshkumawat9950@gmail.com">
@@ -707,7 +784,7 @@ function App() {
                 </a>
               </div>
             </div>
-          </div>
+          </GlowCard>
         </section>
       </main>
 

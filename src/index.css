@@ -5,9 +5,9 @@
 :root {
   --font-sans: 'Outfit', 'Segoe UI', system-ui, sans-serif;
   --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
-  --ink: #f7f7fb;
-  --ink-muted: rgba(247, 247, 251, 0.65);
-  --accent: #4c78ff;
+  --ink: #ffffff;
+  --ink-muted: rgba(247, 247, 251, 0.85);
+  --accent: #60a5fa;
 }
 
 * {
@@ -15,17 +15,20 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
   color: var(--ink);
-  background: #040406;
+  background: #020408;
   min-height: 100vh;
   line-height: 1.6;
   position: relative;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body.splash-lock {

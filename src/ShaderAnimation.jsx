@@ -65,18 +65,13 @@ export function ShaderAnimation({ onComplete, duration = 4500 }) {
         vec3 crestGlow = vec3(0.18, 0.45, 1.0) * (0.015 / (abs(dist - openingRadius) + 0.012));
         ringColor += crestGlow;
 
-        // Inside portal: transparent (0.0), reveals the landing page
-        // Outside portal: black (1.0), hides the landing page
-        float edgeSoftness = 0.045;
-        float blackMask = smoothstep(openingRadius - edgeSoftness, openingRadius + edgeSoftness, dist);
-
         // Fade ring brightness gently as the wave sweeps past the edges
-        float ringFade = 1.0 - smoothstep(0.82, 1.0, progress);
+        float ringFade = 1.0 - smoothstep(0.85, 1.0, progress);
         vec3 rings = ringColor * ringFade;
 
-        // Subtle soft rim lighting on the perimeter of the black curtain
+        // Luminous glowing circle light overlay
         vec3 finalRgb = rings;
-        float finalAlpha = clamp(blackMask + length(rings) * 0.9, 0.0, 1.0);
+        float finalAlpha = clamp(length(rings) * 1.6, 0.0, 1.0);
 
         gl_FragColor = vec4(finalRgb, finalAlpha);
       }
@@ -130,8 +125,8 @@ export function ShaderAnimation({ onComplete, duration = 4500 }) {
       const elapsed = performance.now() - startTime
       const linearProgress = Math.min(elapsed / duration, 1.0)
       
-      // Velvety cubic-bezier style ease-out: starts with swift energy then expands smoothly
-      const currentProgress = 1.0 - Math.pow(1.0 - linearProgress, 2.8)
+      // Gentle, velvety cinematic expansion: smooth, relaxing expansion across the viewport
+      const currentProgress = 1.0 - Math.pow(1.0 - linearProgress, 2.2)
 
       uniforms.progress.value = currentProgress
       renderer.render(scene, camera)
@@ -185,7 +180,7 @@ export function ShaderAnimation({ onComplete, duration = 4500 }) {
         inset: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: 1500, // Above main website content, below splash screen
+        zIndex: 2500, // On top of splash screen so glowing circle light is prominently visible
         pointerEvents: 'none',
         overflow: 'hidden',
       }}

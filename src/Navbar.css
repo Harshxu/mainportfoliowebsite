@@ -80,9 +80,11 @@
   0% {
     transform: translateX(0);
   }
+
   70% {
     transform: translateX(3px);
   }
+
   100% {
     transform: translateX(0);
   }
